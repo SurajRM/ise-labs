@@ -41,6 +41,7 @@ int main()
     2: Dequeue\n\
     3: IsFull\n\
     4: IsEmpty\n\
+    5: Display contents\n\
     -1: Exit\n\
     Select an operation: ");
         scanf("%d", &choice);
@@ -69,6 +70,9 @@ int main()
                 printf("The queue is empty\n");
             else
                 printf("The queue is not empty\n");
+            break;
+        case 5:
+            display_queue(&que);
             break;
         case -1:
             exit(0);
@@ -145,5 +149,17 @@ char *dequeue(Queue *q)
 
 void display_queue(Queue *q)
 {
-    //TODO: Implement this function
+    if (is_empty(q))
+    {
+        printf("QUEUE EMPTY\n");
+        return "";
+    }
+    printf("\nQueue: [");
+    for(int i = q->front; i <= q->rear; i = (i + 1) % q->queue_size)
+    {
+        printf("\"%s\"", q->messages[i]);
+        if (i != q->rear)
+            printf(", ");
+    }
+    printf("]\n");
 }
