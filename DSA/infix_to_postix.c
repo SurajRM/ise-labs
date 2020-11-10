@@ -3,7 +3,6 @@
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
-#include <ctype.h>
 
 char infix_string[200], postfix_string[200];
 int top;
@@ -26,7 +25,7 @@ int main()
     system("clear");
     printf("\nINPUT THE INFIX EXPRESSION : ");
     scanf("%s", infix_string);
-    if(!validity(0, strlen(infix_string) - 1))
+    if (!validity(0, strlen(infix_string) - 1))
     {
         printf("Invalid input\n");
         exit(0);
@@ -155,24 +154,39 @@ bool validity(int start, int end)
         return true;
     if (infix_string[start] == '(')
     {
-        int paren = 1, last_paren;
-        for (int i = start + 1; i <= end && paren != 0; i++)
-		{
-			if (infix_string[i] == '(')
-				paren++;
-			else if (infix_string[i] == ')')
-				paren--;
-            last_paren = i;
-		}
-        return validity(start + 1, last_paren - 1);
+        int paren = 1;
+        for (int i = start + 1; i < end + 1; i++)
+        {
+            if (infix_string[i] == '(')
+                paren++;
+            else if (infix_string[i] == ')')
+                paren--;
+            if (paren == 0)
+            {
+                if (i == end)
+                    return validity(start + 1, end - 1);
+                else if (!is_operator(infix_string[i + 1]))
+                    return false;
+                else
+                {
+                    v1 = validity(start + 1, i - 1);
+                    v2 = validity(i + 2, end);
+                    break;
+                }
+            }
+        }
+        if (paren != 0)
+            return false;
     }
     else
     {
         for (int i = start; i <= end; i++)
         {
+            if (infix_string[i] == '(' || infix_string[i] == ')')
+                return false;
             if (is_operator(infix_string[i]))
             {
-                v1 = validity(start, i - 1);    //FIXME: when input is (a+b)c
+                v1 = validity(start, i - 1);
                 v2 = validity(i + 1, end);
                 break;
             }
