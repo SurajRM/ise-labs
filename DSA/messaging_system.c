@@ -16,7 +16,7 @@ typedef struct queue Queue;
 void create_queue(Queue *, int, int);
 bool is_full(Queue *);
 bool is_empty(Queue *);
-void enqueue(Queue *, char *message);
+void enqueue(Queue *, char *);
 char *dequeue(Queue *);
 void display_queue(Queue *);
 
@@ -85,10 +85,10 @@ int main()
 
 void create_queue(Queue *q, int size, int msize)
 {
-    q->messages = malloc(size * sizeof(char *));
+    q->messages = (char **)malloc(size * sizeof(char *));
     for (int i = 0; i < size; i++)
     {
-        q->messages[i] = malloc(msize * sizeof(char));
+        q->messages[i] = (char *)malloc(msize * sizeof(char));
     }
 
     q->queue_size = size;
