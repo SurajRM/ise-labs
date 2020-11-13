@@ -208,8 +208,12 @@ void polynomial_view(struct node *ptr)
             }
             else if (ptr->coefficient > 0 && flag == 1)
                 printf(" + %dx^%d", ptr->coefficient, ptr->exponent);
-            else if (ptr->coefficient < 0)
+            else if (ptr->coefficient < 0 && flag == 0){
                 printf("%dx^%d", ptr->coefficient, ptr->exponent);
+                flag++;
+            }
+            else if (ptr->coefficient < 0 && flag == 1)
+                printf(" - %dx^%d", -ptr->coefficient, ptr->exponent);
         }
         else if (ptr->exponent == 0)
         {
@@ -220,8 +224,12 @@ void polynomial_view(struct node *ptr)
             }
             else if (ptr->coefficient > 0 && flag == 1)
                 printf(" + %d", ptr->coefficient);
-            else if (ptr->coefficient < 0)
+            else if (ptr->coefficient < 0 && flag == 0){
                 printf("%d", ptr->coefficient);
+                flag++;
+            }
+            else if (ptr->coefficient < 0 && flag == 1)
+                printf(" - %d", -ptr->coefficient);
         }
         else if (ptr->exponent == 1)
         {
@@ -232,8 +240,12 @@ void polynomial_view(struct node *ptr)
             }
             else if (ptr->coefficient > 0 && flag == 1)
                 printf(" + %dx", ptr->coefficient);
-            else if (ptr->coefficient < 0)
+            else if (ptr->coefficient < 0 && flag == 0){
                 printf("%dx", ptr->coefficient);
+                flag++;
+            }
+            else if (ptr->coefficient < 0 && flag == 1)
+                printf(" - %dx", -ptr->coefficient);
         }
         ptr = ptr->next;
         i++;
