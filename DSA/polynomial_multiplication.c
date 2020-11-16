@@ -1,250 +1,146 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct node
-{
+typedef struct node {
     int coefficient, exponent;
     struct node *next;
-};
+} node;
 
-struct node *hPtr1, *hPtr2, *hPtr3;
+typedef struct LinkedList {
+    node *head;
+} LinkedList;
 
-struct node *buildNode(int, int);
-void polynomial_insert(struct node **myNode, int, int);
-void polynomial_add(struct node **n1, int, int);
-void polynomial_multiply(struct node **n1, struct node *n2, struct node *n3);
-struct node *polynomial_deleteList(struct node *ptr);
-void polynomial_view(struct node *ptr);
+void input_polynomials(LinkedList *);
+node *create_node(int, int);
+void polynomial_add_node(LinkedList *, int, int);
+void insert_descending(LinkedList *, int, int);
+void polynomial_view(LinkedList *);
+void multiply_polynomials(LinkedList *, LinkedList *, LinkedList *);
+void delete_LinkedList(LinkedList *);
 
-int main()
-{
-    system("clear");
-    int coefficient, exponent, i, n;
-    int count;
+int main() {
+    LinkedList L1 = {NULL}, L2 = {NULL}, ans = {NULL};
     printf("            Multiplication of Two Polynomials\n");
-    printf("Enter the number of coefficients in the multiplicand: ");
-    scanf("%d", &count);
-    for (i = 0; i < count; i++)
-    {
-        printf("Enter the coefficient part: ");
-        scanf("%d", &coefficient);
-        printf("Enter the exponent part: ");
-        scanf("%d", &exponent);
-        polynomial_insert(&hPtr1, coefficient, exponent);
-    }
+    input_polynomials(&L1);
     printf("\n");
-    printf("Enter the number of coefficients in the multiplier: ");
-    scanf("%d", &count);
-    for (i = 0; i < count; i++)
-    {
-        printf("Enter the coefficient part: ");
-        scanf("%d", &coefficient);
-        printf("Enter the exponent part: ");
-        scanf("%d", &exponent);
-        polynomial_insert(&hPtr2, coefficient, exponent);
-    }
+    input_polynomials(&L2);
     printf("\nPolynomial Expression 1: ");
-    polynomial_view(hPtr1);
+    polynomial_view(&L1);
     printf("Polynomial Expression 2: ");
-    polynomial_view(hPtr2);
+    polynomial_view(&L2);
 
-    polynomial_multiply(&hPtr3, hPtr1, hPtr2);
-
+    multiply_polynomials(&ans, &L1, &L2);
     printf("Output: ");
-    polynomial_view(hPtr3);
+    polynomial_view(&ans);
 
-    hPtr1 = polynomial_deleteList(hPtr1);
-    hPtr2 = polynomial_deleteList(hPtr2);
-    hPtr3 = polynomial_deleteList(hPtr3);
+    delete_LinkedList(&L1);
+    delete_LinkedList(&L2);
+    delete_LinkedList(&ans);
 
     return 0;
 }
 
-/* creates new node and fill the given data */
-struct node *buildNode(int coefficient, int exponent)
-{
-    struct node *ptr = (struct node *)malloc(sizeof(struct node));
+void input_polynomials(LinkedList *LL) {
+    int count, coefficient, exponent;
+    printf("Enter the number of coefficients in the addend: ");
+    scanf("%d", &count);
+    for (int i = 0; i < count; i++) {
+        printf("Enter the coefficient part %d: ", i + 1);
+        scanf("%d", &coefficient);
+        printf("Enter the exponent part %d: ", i + 1);
+        scanf("%d", &exponent);
+        insert_descending(LL, coefficient, exponent);
+    }
+}
+
+node *create_node(int coefficient, int exponent) {
+    node *ptr = (node *)malloc(sizeof(node));
     ptr->coefficient = coefficient;
     ptr->exponent = exponent;
     ptr->next = NULL;
     return ptr;
 }
 
-/* insert data in decending order - based on exponent value */
-void polynomial_insert(struct node **myNode, int coefficient, int exponent)
-{
-    struct node *lPtr, *pPtr, *qPtr = *myNode;
-    lPtr = buildNode(coefficient, exponent);
-
-    /* inserting new node at appropriate position */
-    if (*myNode == NULL || (*myNode)->exponent < exponent)
-    {
-        *myNode = lPtr;
-        (*myNode)->next = qPtr;
+void insert_descending(LinkedList *LL, int coe, int exp) {
+    node *new_node = create_node(coe, exp);
+    node *temp = LL->head;
+    if (LL->head == NULL || LL->head->exponent < exp) {
+        new_node->next = LL->head;
+        LL->head = new_node;
         return;
     }
-
-    /* placing new node between two nodes or end of node */
-    while (qPtr)
-    {
-        pPtr = qPtr;
-        qPtr = qPtr->next;
-        if (!qPtr)
-        {
-            pPtr->next = lPtr;
-            break;
+    while (temp->next) {
+        if (temp->exponent > exp && (!temp->next || temp->next->exponent < exp)) {
+            new_node->next = temp->next;
+            temp->next = new_node;
+            return;
         }
-        else if ((exponent < pPtr->exponent) && (exponent > qPtr->exponent))
-        {
-            lPtr->next = qPtr;
-            pPtr->next = lPtr;
-            break;
-        }
+        temp = temp->next;
     }
-    return;
+    temp->next = new_node;
 }
 
-/* inserting new node with resultant data into the output list (n1) */
-void polynomial_add(struct node **n1, int coefficient, int exponent)
-{
-    struct node *x = NULL, *temp = *n1;
-    if (*n1 == NULL || (*n1)->exponent < exponent)
-    {
-        /* adding at the front */
-        *n1 = x = buildNode(coefficient, exponent);
-        (*n1)->next = temp;
-    }
-    else
-    {
-        while (temp)
-        {
-            if (temp->exponent == exponent)
-            {
-                /* updating the co-efficient value  alone */
-                temp->coefficient = temp->coefficient + coefficient;
-                return;
-            }
-            if (temp->exponent > exponent && (!temp->next || temp->next->exponent < exponent))
-            {
-                /* inserting in the middle or end */
-                x = buildNode(coefficient, exponent);
-                x->next = temp->next;
-                temp->next = x;
-                return;
-            }
-            temp = temp->next;
-        }
-        x->next = NULL;
-        temp->next = x;
-    }
-}
-
-void polynomial_multiply(struct node **n1, struct node *n2, struct node *n3)
-{
-    struct node *temp;
-    int coefficient, exponent;
-
-    temp = n3;
-
-    /* if both input list are absent, then output list is NULL */
-    if (!n2 && !n3)
+void polynomial_add_node(LinkedList *LL, int coe, int exp) {
+    node *new_node = create_node(coe, exp);
+    node *temp = LL->head;
+    if (LL->head == NULL || LL->head->exponent < exp) {
+        new_node->next = LL->head;
+        LL->head = new_node;
         return;
-
-    /* input list 1(n2) is absent, then output list is input list2 (n3) */
-    if (!n2)
-    {
-        *n1 = n3;
     }
-    else if (!n3)
-    {
-        /* list n3 is absent, then o/p list is n2 */
-        *n1 = n2;
-    }
-    else
-    {
-        while (n2)
-        {
-            while (n3)
-            {
-                /* multiply coefficient & add exponents */
-                coefficient = n2->coefficient * n3->coefficient;
-                exponent = n2->exponent + n3->exponent;
-                n3 = n3->next;
-                /* insert the above manipulated data to o/p list */
-                polynomial_add(n1, coefficient, exponent);
-            }
-            n3 = temp;
-            n2 = n2->next;
+    while (temp) {
+        if (temp->exponent == exp) {
+            temp->coefficient += coe;
+            free(new_node);
+            return;
         }
+        if (temp->exponent > exp && (!temp->next || (temp->next)->exponent < exp)) {
+            new_node->next = temp->next;
+            temp->next = new_node;
+            return;
+        }
+        temp = temp->next;
     }
-    return;
+    temp->next = new_node;
 }
 
-/* delete the given input list */
-struct node *polynomial_deleteList(struct node *ptr)
-{
-    struct node *temp;
-    while (ptr)
-    {
-        temp = ptr->next;
-        free(ptr);
-        ptr = temp;
-    }
-    return NULL;
-}
-
-void polynomial_view(struct node *ptr)
-{
+void polynomial_view(LinkedList *LL) {
+    node *ptr = LL->head;
     int i = 0;
     int flag = 0;
-    while (ptr)
-    {
-        if (ptr->exponent != 0 || ptr->exponent != 1)
-        {
-            if (ptr->coefficient > 0 && flag == 0)
-            {
+    while (ptr) {
+        if (ptr->exponent != 0 && ptr->exponent != 1) {
+            if (ptr->coefficient > 0 && flag == 0) {
                 printf("%dx^%d", ptr->coefficient, ptr->exponent);
                 flag++;
-            }
-            else if (ptr->coefficient > 0 && flag == 1)
+            } else if (ptr->coefficient > 0 && flag == 1)
                 printf(" + %dx^%d", ptr->coefficient, ptr->exponent);
-            else if (ptr->coefficient < 0 && flag == 0){
+            else if (ptr->coefficient < 0 && flag == 0) {
                 printf("%dx^%d", ptr->coefficient, ptr->exponent);
                 flag++;
-            }
-            else if (ptr->coefficient < 0 && flag == 1)
+            } else if (ptr->coefficient < 0 && flag == 1)
                 printf(" - %dx^%d", -ptr->coefficient, ptr->exponent);
-        }
-        else if (ptr->exponent == 0)
-        {
-            if (ptr->coefficient > 0 && flag == 0)
-            {
+        } else if (ptr->exponent == 0) {
+            if (ptr->coefficient > 0 && flag == 0) {
                 printf("%d", ptr->coefficient);
                 flag++;
-            }
-            else if (ptr->coefficient > 0 && flag == 1)
+            } else if (ptr->coefficient > 0 && flag == 1)
                 printf(" + %d", ptr->coefficient);
-            else if (ptr->coefficient < 0 && flag == 0){
+            else if (ptr->coefficient < 0 && flag == 0) {
                 printf("%d", ptr->coefficient);
                 flag++;
-            }
-            else if (ptr->coefficient < 0 && flag == 1)
+            } else if (ptr->coefficient < 0 && flag == 1)
                 printf(" - %d", -ptr->coefficient);
-        }
-        else if (ptr->exponent == 1)
-        {
-            if (ptr->coefficient > 0 && flag == 0)
-            {
+        } else if (ptr->exponent == 1) {
+            if (ptr->coefficient > 0 && flag == 0) {
                 printf("%dx", ptr->coefficient);
                 flag++;
-            }
-            else if (ptr->coefficient > 0 && flag == 1)
+            } else if (ptr->coefficient > 0 && flag == 1)
                 printf(" + %dx", ptr->coefficient);
-            else if (ptr->coefficient < 0 && flag == 0){
+            else if (ptr->coefficient < 0 && flag == 0) {
                 printf("%dx", ptr->coefficient);
                 flag++;
-            }
-            else if (ptr->coefficient < 0 && flag == 1)
+            } else if (ptr->coefficient < 0 && flag == 1)
                 printf(" - %dx", -ptr->coefficient);
         }
         ptr = ptr->next;
@@ -252,4 +148,43 @@ void polynomial_view(struct node *ptr)
     }
     printf("\n");
     return;
+}
+
+void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
+    node *p, *q;
+    int coefficient, exponent;
+
+    p = L1->head;
+    q = L2->head;
+
+    if (!p && !q)
+        return;
+
+    if (!p)
+        ans->head = q;
+    else if (!q)
+        ans->head = p;
+    else {
+        while (p) {
+            while (q) {
+                coefficient = p->coefficient * q->coefficient;
+                exponent = p->exponent + q->exponent;
+                q = q->next;
+                polynomial_add_node(ans, coefficient, exponent);
+            }
+            q = L2->head;
+            p = p->next;
+        }
+    }
+    return;
+}
+
+void delete_LinkedList(LinkedList *LL) {
+    node *temp;
+    node *ptr = LL->head;
+    while (ptr) {
+        temp = ptr->next;
+        free(ptr);
+        ptr = temp;
+    }
 }
