@@ -1,4 +1,3 @@
-// TODO: Display contents of the queue after each enqueue
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,14 +21,17 @@ int main() {
     Queue que;
     int choice;
     int queue_size, max_message_size;
+
     printf("Enter the size of the queue: ");
     scanf("%d", &queue_size);
     printf("Enter the length of the maximum message: ");
     scanf("%d", &max_message_size);
     max_message_size++;
+
     char msg[max_message_size];
     create_queue(&que, queue_size, max_message_size);
     printf("\nQueue of size %d created\n", queue_size);
+
     while (true) {
         printf("\n--------------------------\n");
         printf("1: IsFull\n2: IsEmpty\n3: Display contents\n");
@@ -42,6 +44,7 @@ int main() {
         printf("-1: Exit\n");
         printf("Select an operation: ");
         scanf("%d", &choice);
+
         if (is_empty(&que) && choice == 5) {
             printf("Invalid option\n");
             continue;
@@ -54,17 +57,20 @@ int main() {
                 continue;
             }
         }
+
         switch (choice) {
             case 4:
                 printf("Enter the message to be enqueued: ");
-                scanf("%s", msg);  // FIXME: Input can be a sentence
+                getchar();
+                scanf("%[^\n]s", msg);
                 enqueue(&que, msg);
+                display_queue(&que);
                 break;
             case 5:
                 strcpy(msg, dequeue(&que));
-                if (strcmp(msg, "")) {
+                if (strcmp(msg, ""))
                     printf("The dequeued message is: %s\n", msg);
-                }
+                display_queue(&que);
                 break;
             case 1:
                 if (is_full(&que))
