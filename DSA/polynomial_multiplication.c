@@ -10,7 +10,7 @@ typedef struct LinkedList {
     node *head;
 } LinkedList;
 
-void input_polynomials(LinkedList *);
+void input_polynomials(LinkedList *, char msg[]);
 node *create_node(int, int);
 void polynomial_add_node(LinkedList *, int, int);
 void insert_descending(LinkedList *, int, int);
@@ -21,9 +21,9 @@ void delete_LinkedList(LinkedList *);
 int main() {
     LinkedList L1 = {NULL}, L2 = {NULL}, ans = {NULL};
     printf("            Multiplication of Two Polynomials\n");
-    input_polynomials(&L1);
+    input_polynomials(&L1, "multiplicand");
     printf("\n");
-    input_polynomials(&L2);
+    input_polynomials(&L2, "multiplier");
     printf("\nPolynomial Expression 1: ");
     polynomial_view(&L1);
     printf("Polynomial Expression 2: ");
@@ -40,9 +40,9 @@ int main() {
     return 0;
 }
 
-void input_polynomials(LinkedList *LL) {
+void input_polynomials(LinkedList *LL, char msg[]) {
     int count, coefficient, exponent;
-    printf("Enter the number of coefficients in the addend: ");
+    printf("Enter the number of coefficients in the %s: ", msg);
     scanf("%d", &count);
     for (int i = 0; i < count; i++) {
         printf("Enter the coefficient part %d: ", i + 1);
