@@ -1,12 +1,10 @@
-// TODO: Dynamic options to be displayed depending upon queue
 // TODO: Display contents of the queue after each enqueue
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-struct queue
-{
+struct queue {
     int queue_size, message_size;
     char **messages;
     int front, rear;
@@ -20,12 +18,10 @@ void enqueue(Queue *, char *);
 char *dequeue(Queue *);
 void display_queue(Queue *);
 
-int main()
-{
+int main() {
     Queue que;
     int choice;
     int queue_size, max_message_size;
-    system("clear");
     printf("Enter the size of the queue: ");
     scanf("%d", &queue_size);
     printf("Enter the length of the maximum message: ");
@@ -34,60 +30,69 @@ int main()
     char msg[max_message_size];
     create_queue(&que, queue_size, max_message_size);
     printf("\nQueue of size %d created\n", queue_size);
-    while (true)
-    {
-        printf("\n--------------------------\n\
-    1: Enqueue\n\
-    2: Dequeue\n\
-    3: IsFull\n\
-    4: IsEmpty\n\
-    5: Display contents\n\
-    -1: Exit\n\
-    Select an operation: ");
+    while (true) {
+        printf("\n--------------------------\n");
+        printf("1: IsFull\n2: IsEmpty\n3: Display contents\n");
+        if (!is_full(&que)) {
+            printf("4: Enqueue\n");
+            if (!is_empty(&que))
+                printf("5: Dequeue\n");
+        } else
+            printf("4: Dequeue\n");
+        printf("-1: Exit\n");
+        printf("Select an operation: ");
         scanf("%d", &choice);
-        switch (choice)
-        {
-        case 1:
-            printf("Enter the message to be enqueued: ");
-            scanf("%s", msg); // FIXME: Input can be a sentence
-            enqueue(&que, msg);
-            break;
-        case 2:
-            strcpy(msg, dequeue(&que));
-            if (strcmp(msg, ""))
-            {
-                printf("The dequeued message is: %s", msg);
-            }
-            break;
-        case 3:
-            if (is_full(&que))
-                printf("The queue is full\n");
-            else
-                printf("The queue is not full\n");
-            break;
-        case 4:
-            if (is_empty(&que))
-                printf("The queue is empty\n");
-            else
-                printf("The queue is not empty\n");
-            break;
-        case 5:
-            display_queue(&que);
-            break;
-        case -1:
-            exit(0);
-        default:
+        if (is_empty(&que) && choice == 5) {
             printf("Invalid option\n");
-            break;
+            continue;
+        }
+        if (is_full(&que)) {
+            if (choice == 4)
+                choice++;
+            else if (choice == 5) {
+                printf("Invalid option\n");
+                continue;
+            }
+        }
+        switch (choice) {
+            case 4:
+                printf("Enter the message to be enqueued: ");
+                scanf("%s", msg);  // FIXME: Input can be a sentence
+                enqueue(&que, msg);
+                break;
+            case 5:
+                strcpy(msg, dequeue(&que));
+                if (strcmp(msg, "")) {
+                    printf("The dequeued message is: %s\n", msg);
+                }
+                break;
+            case 1:
+                if (is_full(&que))
+                    printf("The queue is full\n");
+                else
+                    printf("The queue is not full\n");
+                break;
+            case 2:
+                if (is_empty(&que))
+                    printf("The queue is empty\n");
+                else
+                    printf("The queue is not empty\n");
+                break;
+            case 3:
+                display_queue(&que);
+                break;
+            case -1:
+                exit(0);
+            default:
+                printf("Invalid option\n");
+                break;
         }
     }
 }
 
-void create_queue(Queue *q, int size, int msize)
-{
+void create_queue(Queue *q, int size, int msize) {
     q->messages = (char **)malloc(size * sizeof(char *));
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         q->messages[i] = (char *)malloc(msize * sizeof(char));
     }
 
@@ -97,69 +102,54 @@ void create_queue(Queue *q, int size, int msize)
     q->rear = -1;
 }
 
-bool is_full(Queue *q)
-{
+bool is_full(Queue *q) {
     return (q->rear + 1) % q->queue_size == q->front;
 }
 
-bool is_empty(Queue *q)
-{
+bool is_empty(Queue *q) {
     return q->front == -1 && q->rear == -1;
 }
 
-void enqueue(Queue *q, char *message)
-{
-    if (q->front == -1 && q->rear == -1)
-    {
+void enqueue(Queue *q, char *message) {
+    if (q->front == -1 && q->rear == -1) {
         q->front = 0;
         q->rear = 0;
-    }
-    else if (is_full(q))
-    {
+    } else if (is_full(q)) {
         printf("QUEUE FULL\n");
         return;
-    }
-    else
-    {
+    } else {
         q->rear = (q->rear + 1) % q->queue_size;
     }
     strcpy(q->messages[q->rear], message);
 }
 
-char *dequeue(Queue *q)
-{
-    if (is_empty(q))
-    {
+char *dequeue(Queue *q) {
+    if (is_empty(q)) {
         printf("QUEUE EMPTY\n");
         return "";
     }
     char *message = q->messages[q->front];
-    if (q->front == q->rear)
-    {
+    if (q->front == q->rear) {
         q->front = -1;
         q->rear = -1;
-    }
-    else
-    {
+    } else {
         q->front = (q->front + 1) % q->queue_size;
     }
 
     return message;
 }
 
-void display_queue(Queue *q)
-{
-    if (is_empty(q))
-    {
+void display_queue(Queue *q) {
+    if (is_empty(q)) {
         printf("QUEUE EMPTY\n");
-        return "";
+        return;
     }
     printf("\nQueue: [");
-    for(int i = q->front; i <= q->rear; i = (i + 1) % q->queue_size)
-    {
+    int i = q->front;
+    while (i != q->rear) {
         printf("\"%s\"", q->messages[i]);
-        if (i != q->rear)
-            printf(", ");
+        printf(", ");
+        i = (i + 1) % q->queue_size;
     }
-    printf("]\n");
+    printf("\"%s\"]\n", q->messages[q->rear]);
 }
