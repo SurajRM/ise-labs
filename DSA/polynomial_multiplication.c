@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 typedef struct node {
-    int coefficient, exponent;
+    int exponent;
+    float coefficient;
     struct node *next;
 } node;
 
@@ -11,9 +12,9 @@ typedef struct LinkedList {
 } LinkedList;
 
 void input_polynomials(LinkedList *, char msg[]);
-node *create_node(int, int);
-void polynomial_add_node(LinkedList *, int, int);
-void insert_descending(LinkedList *, int, int);
+node *create_node(float, int);
+void polynomial_add_node(LinkedList *, float, int);
+void insert_descending(LinkedList *, float, int);
 void polynomial_view(LinkedList *);
 void multiply_polynomials(LinkedList *, LinkedList *, LinkedList *);
 void delete_LinkedList(LinkedList *);
@@ -24,12 +25,13 @@ int main() {
     input_polynomials(&L1, "multiplicand");
     printf("\n");
     input_polynomials(&L2, "multiplier");
+
+    multiply_polynomials(&ans, &L1, &L2);
+
     printf("\nPolynomial Expression 1: ");
     polynomial_view(&L1);
     printf("Polynomial Expression 2: ");
     polynomial_view(&L2);
-
-    multiply_polynomials(&ans, &L1, &L2);
     printf("Output: ");
     polynomial_view(&ans);
 
@@ -41,19 +43,37 @@ int main() {
 }
 
 void input_polynomials(LinkedList *LL, char msg[]) {
-    int count, coefficient, exponent;
+    int count, exponent;
+    float count2, coefficient, exponent2;
     printf("Enter the number of coefficients in the %s: ", msg);
-    scanf("%d", &count);
+    scanf("%f", &count2);
+    count = (int)count2;
+
+    if (count != count2 || count2 < 0) {
+        printf("Invalid input\n");
+        exit(0);
+    }
+    if (count == 0) {
+        printf("Output: 0\n");
+        exit(0);
+    }
+    
     for (int i = 0; i < count; i++) {
         printf("Enter the coefficient part %d: ", i + 1);
-        scanf("%d", &coefficient);
+        scanf("%f", &coefficient);
+    label:
         printf("Enter the exponent part %d: ", i + 1);
-        scanf("%d", &exponent);
+        scanf("%f", &exponent2);
+        exponent = (int)exponent2;
+        if (exponent != exponent2 || exponent2 < 0) {
+            printf("error: Exponents can only be non negative integers\n");
+            goto label;
+        }
         insert_descending(LL, coefficient, exponent);
     }
 }
 
-node *create_node(int coefficient, int exponent) {
+node *create_node(float coefficient, int exponent) {
     node *ptr = (node *)malloc(sizeof(node));
     ptr->coefficient = coefficient;
     ptr->exponent = exponent;
@@ -61,7 +81,7 @@ node *create_node(int coefficient, int exponent) {
     return ptr;
 }
 
-void insert_descending(LinkedList *LL, int coe, int exp) {
+void insert_descending(LinkedList *LL, float coe, int exp) {
     node *new_node = create_node(coe, exp);
     node *temp = LL->head;
     if (LL->head == NULL || LL->head->exponent < exp) {
@@ -80,7 +100,7 @@ void insert_descending(LinkedList *LL, int coe, int exp) {
     temp->next = new_node;
 }
 
-void polynomial_add_node(LinkedList *LL, int coe, int exp) {
+void polynomial_add_node(LinkedList *LL, float coe, int exp) {
     node *new_node = create_node(coe, exp);
     node *temp = LL->head;
     if (LL->head == NULL || LL->head->exponent < exp) {
@@ -111,37 +131,37 @@ void polynomial_view(LinkedList *LL) {
     while (ptr) {
         if (ptr->exponent != 0 && ptr->exponent != 1) {
             if (ptr->coefficient > 0 && flag == 0) {
-                printf("%dx^%d", ptr->coefficient, ptr->exponent);
+                printf("%0.2fx^%d", ptr->coefficient, ptr->exponent);
                 flag++;
             } else if (ptr->coefficient > 0 && flag == 1)
-                printf(" + %dx^%d", ptr->coefficient, ptr->exponent);
+                printf(" + %0.2fx^%d", ptr->coefficient, ptr->exponent);
             else if (ptr->coefficient < 0 && flag == 0) {
-                printf("%dx^%d", ptr->coefficient, ptr->exponent);
+                printf("%0.2fx^%d", ptr->coefficient, ptr->exponent);
                 flag++;
             } else if (ptr->coefficient < 0 && flag == 1)
-                printf(" - %dx^%d", -ptr->coefficient, ptr->exponent);
+                printf(" - %0.2fx^%d", -ptr->coefficient, ptr->exponent);
         } else if (ptr->exponent == 0) {
             if (ptr->coefficient > 0 && flag == 0) {
-                printf("%d", ptr->coefficient);
+                printf("%0.2f", ptr->coefficient);
                 flag++;
             } else if (ptr->coefficient > 0 && flag == 1)
-                printf(" + %d", ptr->coefficient);
+                printf(" + %0.2f", ptr->coefficient);
             else if (ptr->coefficient < 0 && flag == 0) {
-                printf("%d", ptr->coefficient);
+                printf("%0.2f", ptr->coefficient);
                 flag++;
             } else if (ptr->coefficient < 0 && flag == 1)
-                printf(" - %d", -ptr->coefficient);
+                printf(" - %0.2f", -ptr->coefficient);
         } else if (ptr->exponent == 1) {
             if (ptr->coefficient > 0 && flag == 0) {
-                printf("%dx", ptr->coefficient);
+                printf("%0.2fx", ptr->coefficient);
                 flag++;
             } else if (ptr->coefficient > 0 && flag == 1)
-                printf(" + %dx", ptr->coefficient);
+                printf(" + %0.2fx", ptr->coefficient);
             else if (ptr->coefficient < 0 && flag == 0) {
-                printf("%dx", ptr->coefficient);
+                printf("%0.2fx", ptr->coefficient);
                 flag++;
             } else if (ptr->coefficient < 0 && flag == 1)
-                printf(" - %dx", -ptr->coefficient);
+                printf(" - %0.2fx", -ptr->coefficient);
         }
         ptr = ptr->next;
         i++;
@@ -152,7 +172,8 @@ void polynomial_view(LinkedList *LL) {
 
 void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
     node *p, *q;
-    int coefficient, exponent;
+    int exponent;
+    float coefficient;
 
     p = L1->head;
     q = L2->head;
@@ -161,9 +182,9 @@ void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
         return;
 
     if (!p)
-        ans->head = q;
+        ans = L2;
     else if (!q)
-        ans->head = p;
+        ans = L1;
     else {
         while (p) {
             while (q) {
