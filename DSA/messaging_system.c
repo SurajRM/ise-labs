@@ -21,11 +21,22 @@ int main() {
     Queue que;
     int choice;
     int queue_size, max_message_size;
+    float queue_size2, max_message_size2;
 
     printf("Enter the size of the queue: ");
-    scanf("%d", &queue_size);
+    scanf("%f", &queue_size2);
+    queue_size = (int)queue_size2;
+    if (queue_size != queue_size2 || queue_size2 < 0) {
+        printf("Invalid input\n");
+        exit(0);
+    }
     printf("Enter the length of the maximum message: ");
-    scanf("%d", &max_message_size);
+    scanf("%f", &max_message_size2);
+    max_message_size = (int)max_message_size2;
+    if (max_message_size != max_message_size2 || max_message_size < 0) {
+        printf("Invalid input\n");
+        exit(0);
+    }
     max_message_size++;
 
     char msg[max_message_size];
