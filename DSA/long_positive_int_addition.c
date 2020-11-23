@@ -42,3 +42,24 @@ void input_long_int(CircularLL *LL) {
         insert_end(LL, digit);
     }
 }
+
+node *create_node(int digit) {
+    node *ptr = (node *)malloc(sizeof(node));
+    ptr->digit = digit;
+    ptr->next = NULL;
+    return ptr;
+}
+
+void insert_end(CircularLL *LL, int digit) {
+    node *new_node = create_node(digit);
+    if (LL->head == NULL) {
+        LL->head = new_node;
+        new_node->next = new_node;
+        return;
+    }
+    node *temp = LL->head;
+    while(temp->next != LL->head)
+        temp = temp->next;
+    temp->next = new_node;
+    new_node->next = LL->head;
+}
