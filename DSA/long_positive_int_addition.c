@@ -16,7 +16,7 @@ void insert_end(CircularLL *, int);
 void insert_start(CircularLL *, int);
 void long_int_view(CircularLL *);
 void add_long_int(CircularLL *, CircularLL *, CircularLL *);
-void delete_CircularLL(CircularLL *);
+void delete_circularll(CircularLL *);
 
 int main() {
     return 0;
@@ -36,7 +36,7 @@ void input_long_int(CircularLL *LL) {
         }
         break;
     }
-    while(num) {
+    while (num) {
         digit = num % 10;
         num /= 10;
         insert_end(LL, digit);
@@ -44,10 +44,10 @@ void input_long_int(CircularLL *LL) {
 }
 
 node *create_node(int digit) {
-    node *ptr = (node *)malloc(sizeof(node));
-    ptr->digit = digit;
-    ptr->next = NULL;
-    return ptr;
+    node *temp = (node *)malloc(sizeof(node));
+    temp->digit = digit;
+    temp->next = NULL;
+    return temp;
 }
 
 void insert_end(CircularLL *LL, int digit) {
@@ -62,7 +62,7 @@ void insert_end(CircularLL *LL, int digit) {
     LL->tail = new_node;
 }
 
-void insert_start(CircularLL *LL, int digit){
+void insert_start(CircularLL *LL, int digit) {
     node *new_node = create_node(digit);
     if (LL->tail == NULL) {
         LL->tail = new_node;
@@ -71,4 +71,24 @@ void insert_start(CircularLL *LL, int digit){
     }
     new_node->next = LL->tail->next;
     LL->tail->next = new_node;
+}
+
+void long_int_view(CircularLL *LL) {
+    node *temp = LL->tail->next;
+    do {
+        printf("%d", temp->digit);
+        temp = temp->next;
+    } while (temp != LL->tail->next);
+    printf("\n");
+}
+
+void delete_circularll(CircularLL *LL) {
+    node *next_node = NULL;
+    node *current_node = LL->tail->next;
+    while (current_node != LL->tail) {
+        next_node = current_node->next;
+        free(current_node);
+        current_node = next_node;
+    }
+    free(current_node);
 }
