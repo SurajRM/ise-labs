@@ -82,6 +82,49 @@ void long_int_view(CircularLL *LL) {
     printf("\n");
 }
 
+void add_long_int(CircularLL *ans, CircularLL *L1, CircularLL *L2) {
+    int carry = 0, sum, digit;
+    node *left_over, *tail_node;
+
+    if (!L1->tail && !L2->tail)
+        return;
+    if (!L1->tail)
+        ans = L2;
+    if (!L2->tail)
+        ans = L1;
+
+    node *p = L1->tail->next;
+    node *q = L2->tail->next;
+    do {
+        sum = p->digit + q->digit + carry;
+        digit = sum % 10;
+        carry = sum / 10;
+
+        insert_start(ans, digit);
+        p = p->next;
+        q = q->next;
+    } while (p != L1->tail->next && q != L2->tail->next);
+
+    if (p != L1->tail->next) {
+        left_over = p;
+        tail_node = L1->tail;
+    } else {
+        left_over = q;
+        tail_node = L2->tail;
+    }
+
+    while (left_over != tail_node->next) {
+        sum = left_over->digit + carry;
+        digit = sum % 10;
+        carry = sum / 10;
+        insert_start(ans, digit);
+        left_over = left_over->next;
+    }
+
+    if (carry)
+        insert_start(ans, carry);
+}
+
 void delete_circularll(CircularLL *LL) {
     node *next_node = NULL;
     node *current_node = LL->tail->next;
