@@ -59,4 +59,16 @@ void insert_end(CircularLL *LL, int digit) {
     }
     new_node->next = LL->tail->next;
     LL->tail->next = new_node;
+    LL->tail = new_node;
+}
+
+void insert_start(CircularLL *LL, int digit){
+    node *new_node = create_node(digit);
+    if (LL->tail == NULL) {
+        LL->tail = new_node;
+        new_node->next = new_node;
+        return;
+    }
+    new_node->next = LL->tail->next;
+    LL->tail->next = new_node;
 }
