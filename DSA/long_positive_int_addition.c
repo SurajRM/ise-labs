@@ -7,7 +7,7 @@ typedef struct node {
 } node;
 
 typedef struct CircularLL {
-    node *head;
+    node *tail;
 } CircularLL;
 
 void input_long_int(CircularLL *);
@@ -52,14 +52,11 @@ node *create_node(int digit) {
 
 void insert_end(CircularLL *LL, int digit) {
     node *new_node = create_node(digit);
-    if (LL->head == NULL) {
-        LL->head = new_node;
+    if (LL->tail == NULL) {
+        LL->tail = new_node;
         new_node->next = new_node;
         return;
     }
-    node *temp = LL->head;
-    while(temp->next != LL->head)
-        temp = temp->next;
-    temp->next = new_node;
-    new_node->next = LL->head;
+    new_node->next = LL->tail->next;
+    LL->tail->next = new_node;
 }
