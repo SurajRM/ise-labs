@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
@@ -22,8 +23,7 @@ int main()
     int count, length;
     char temp;
     top = -1;
-    system("clear");
-    printf("\nINPUT THE INFIX EXPRESSION : ");
+    printf("INPUT THE INFIX EXPRESSION : ");
     scanf("%s", infix_string);
     if (!validity(0, strlen(infix_string) - 1))
     {
