@@ -25,6 +25,13 @@ void view_matrix(DoublyLL *);
 void delete_doublyll(DoublyLL *);
 
 int main() {
+    printf("\t\tSparse matrix using doubly linked list\n");
+    DoublyLL sparse_matrix = {NULL, NULL};
+
+    input_matrix(&sparse_matrix);
+    view_matrix(&sparse_matrix);
+
+    delete_doublyll(&sparse_matrix);
     return 0;
 }
 
@@ -39,6 +46,7 @@ node *create_node(int row, int column, float data) {
 }
 
 void insert_node(DoublyLL *LL, int row, int column, float data) {
+//    TODO: Use header node's data to store the length
     node *new_node = create_node(row, column, data);
     if (LL->head == NULL) {
         LL->head = LL->tail = new_node;
@@ -49,3 +57,50 @@ void insert_node(DoublyLL *LL, int row, int column, float data) {
     LL->tail = new_node;
 }
 
+void input_matrix(DoublyLL *LL) {
+//    TODO: Check for validation
+    int row, column;
+    float data;
+    printf("Enter the order of the matrix: ");
+    scanf("%d %d", &row, &column);
+    insert_node(LL, row, column, 0);
+    for (int i = 0; i < row; i++) {
+        printf("Enter the elements in the row %d: ", i + 1);
+        for (int j = 0; j < column; j++) {
+            scanf("%f", &data);
+            if (data != 0)
+                insert_node(LL, i, j, data);
+        }
+    }
+}
+
+void view_matrix(DoublyLL *LL) {
+    node *temp = LL->head->next;
+    int row = LL->head->row;
+    int column = LL->head->column;
+    printf("[");
+    for (int i = 0; i < row; i++) {
+        printf("[");
+        for (int j = 0; j < column; j++) {
+            if (temp != NULL && (temp->row == i && temp->column == j)) {
+                printf("%0.2f", temp->data);
+                temp = temp->next;
+            } else
+                printf("0");
+
+            if (j < column - 1)
+                printf(", ");
+        }
+        if (i < row - 1)
+            printf("],\n ");
+    }
+    printf("]]");
+}
+
+void delete_doublyll(DoublyLL *LL) {
+    node *temp = LL->head->next;
+    while (temp) {
+        free(temp->previous);
+        temp = temp->next;
+    }
+}
