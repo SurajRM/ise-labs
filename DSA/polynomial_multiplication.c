@@ -12,11 +12,17 @@ typedef struct LinkedList {
 } LinkedList;
 
 void input_polynomials(LinkedList *, char msg[]);
+
 node *create_node(float, int);
+
 void polynomial_add_node(LinkedList *, float, int);
+
 void insert_descending(LinkedList *, float, int);
+
 void polynomial_view(LinkedList *);
+
 void multiply_polynomials(LinkedList *, LinkedList *, LinkedList *);
+
 void delete_LinkedList(LinkedList *);
 
 int main() {
@@ -47,7 +53,7 @@ void input_polynomials(LinkedList *LL, char msg[]) {
     float count2, coefficient, exponent2;
     printf("Enter the number of coefficients in the %s: ", msg);
     scanf("%f", &count2);
-    count = (int)count2;
+    count = (int) count2;
 
     if (count != count2 || count2 < 0) {
         printf("Invalid input\n");
@@ -57,14 +63,14 @@ void input_polynomials(LinkedList *LL, char msg[]) {
         printf("Output: 0\n");
         exit(0);
     }
-    
+
     for (int i = 0; i < count; i++) {
         printf("Enter the coefficient part %d: ", i + 1);
         scanf("%f", &coefficient);
-    label:
+        label:
         printf("Enter the exponent part %d: ", i + 1);
         scanf("%f", &exponent2);
-        exponent = (int)exponent2;
+        exponent = (int) exponent2;
         if (exponent != exponent2 || exponent2 < 0) {
             printf("error: Exponents can only be non negative integers\n");
             goto label;
@@ -74,7 +80,7 @@ void input_polynomials(LinkedList *LL, char msg[]) {
 }
 
 node *create_node(float coefficient, int exponent) {
-    node *ptr = (node *)malloc(sizeof(node));
+    node *ptr = (node *) malloc(sizeof(node));
     ptr->coefficient = coefficient;
     ptr->exponent = exponent;
     ptr->next = NULL;
@@ -121,12 +127,10 @@ void polynomial_add_node(LinkedList *LL, float coe, int exp) {
         }
         temp = temp->next;
     }
-    temp->next = new_node;
 }
 
 void polynomial_view(LinkedList *LL) {
     node *ptr = LL->head;
-    int i = 0;
     int flag = 0;
     while (ptr) {
         if (ptr->exponent != 0 && ptr->exponent != 1) {
@@ -164,10 +168,8 @@ void polynomial_view(LinkedList *LL) {
                 printf(" - %0.2fx", -ptr->coefficient);
         }
         ptr = ptr->next;
-        i++;
     }
     printf("\n");
-    return;
 }
 
 void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
@@ -182,9 +184,9 @@ void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
         return;
 
     if (!p)
-        ans = L2;
+        ans->head = L2->head;
     else if (!q)
-        ans = L1;
+        ans->head = L1->head;
     else {
         while (p) {
             while (q) {
@@ -197,7 +199,6 @@ void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
             p = p->next;
         }
     }
-    return;
 }
 
 void delete_LinkedList(LinkedList *LL) {

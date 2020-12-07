@@ -11,10 +11,15 @@ struct queue {
 typedef struct queue Queue;
 
 void create_queue(Queue *, int, int);
+
 bool is_full(Queue *);
+
 bool is_empty(Queue *);
+
 void enqueue(Queue *, char *);
+
 char *dequeue(Queue *);
+
 void display_queue(Queue *);
 
 int main() {
@@ -25,14 +30,14 @@ int main() {
 
     printf("Enter the size of the queue: ");
     scanf("%f", &queue_size2);
-    queue_size = (int)queue_size2;
+    queue_size = (int) queue_size2;
     if (queue_size != queue_size2 || queue_size2 < 0) {
         printf("Invalid input\n");
         exit(0);
     }
     printf("Enter the length of the maximum message: ");
     scanf("%f", &max_message_size2);
-    max_message_size = (int)max_message_size2;
+    max_message_size = (int) max_message_size2;
     if (max_message_size != max_message_size2 || max_message_size < 0) {
         printf("Invalid input\n");
         exit(0);
@@ -108,9 +113,9 @@ int main() {
 }
 
 void create_queue(Queue *q, int size, int msize) {
-    q->messages = (char **)malloc(size * sizeof(char *));
+    q->messages = (char **) malloc(size * sizeof(char *));
     for (int i = 0; i < size; i++) {
-        q->messages[i] = (char *)malloc(msize * sizeof(char));
+        q->messages[i] = (char *) malloc(msize * sizeof(char));
     }
 
     q->queue_size = size;

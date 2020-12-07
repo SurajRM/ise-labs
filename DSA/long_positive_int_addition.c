@@ -12,11 +12,17 @@ typedef struct CircularLL {
 } CircularLL;
 
 void input_long_int(CircularLL *);
+
 node *create_node(int);
-void *create_circularll(CircularLL *);
+
+void create_circularll(CircularLL *);
+
 void insert_start(CircularLL *, int);
+
 void long_int_view(CircularLL *);
+
 void add_long_int(CircularLL *, CircularLL *, CircularLL *);
+
 void delete_circularll(CircularLL *);
 
 int main() {
@@ -57,14 +63,14 @@ void input_long_int(CircularLL *LL) {
 }
 
 node *create_node(int digit) {
-    node *temp = (node *)malloc(sizeof(node));
+    node *temp = (node *) malloc(sizeof(node));
     temp->data = digit;
     temp->next = NULL;
     return temp;
 }
 
-void *create_circularll(CircularLL *LL) {
-    node *new_node = (node *)malloc(sizeof(node));
+void create_circularll(CircularLL *LL) {
+    node *new_node = (node *) malloc(sizeof(node));
     LL->head = new_node;
     LL->head->data = 0;
     LL->head->next = LL->head;
@@ -99,10 +105,10 @@ void add_long_int(CircularLL *ans, CircularLL *L1, CircularLL *L2) {
     if (L1->head->data == 0 && L2->head->data == 0)
         return;
     if (L1->head->data == 0) {
-        ans = L2;
+        ans->head = L2->head;
         return;
     } else if (L2->head->data == 0) {
-        ans = L1;
+        ans->head = L1->head;
         return;
     }
 
