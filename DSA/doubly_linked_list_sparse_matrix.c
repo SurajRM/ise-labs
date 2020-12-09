@@ -46,7 +46,6 @@ node *create_node(int row, int column, float data) {
 }
 
 void insert_node(DoublyLL *LL, int row, int column, float data) {
-//    TODO: Use header node's data to store the length
     node *new_node = create_node(row, column, data);
     if (LL->head == NULL) {
         LL->head = LL->tail = new_node;
@@ -55,6 +54,7 @@ void insert_node(DoublyLL *LL, int row, int column, float data) {
     LL->tail->next = new_node;
     new_node->previous = LL->tail;
     LL->tail = new_node;
+    LL->head->data += 1;
 }
 
 void input_matrix(DoublyLL *LL) {

@@ -14,7 +14,7 @@ int out = 0;
 int buffer[BufferSize];
 
 
-void *producer(void *arg) {
+void *producer() {
     for (int i = 0; i < MaxItems; i++) {
         sleep(1);
         sem_wait(&empty);
@@ -25,8 +25,10 @@ void *producer(void *arg) {
         sem_post(&s);
         sem_post(&full);
     }
+    return NULL;
 }
-void *consumer(void *arg) {
+
+void *consumer() {
     for (int i = 0; i < MaxItems; i++) {
         sleep(1);
         sem_wait(&full);
@@ -37,6 +39,7 @@ void *consumer(void *arg) {
         sem_post(&s);
         sem_post(&empty);
     }
+    return NULL;
 }
 
 int main() {
