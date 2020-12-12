@@ -29,6 +29,7 @@ int main() {
     DoublyLL sparse_matrix = {NULL, NULL};
 
     input_matrix(&sparse_matrix);
+    printf("Matrix:\n");
     view_matrix(&sparse_matrix);
 
     delete_doublyll(&sparse_matrix);
@@ -58,18 +59,26 @@ void insert_node(DoublyLL *LL, int row, int column, float data) {
 }
 
 void input_matrix(DoublyLL *LL) {
-//    TODO: Check for validation
     int row, column;
     float data;
+    char buffer[1024];
+    char *ptr;
     printf("Enter the order of the matrix: ");
-    scanf("%d %d", &row, &column);
+    scanf("%u %u", &row, &column);
+    getchar();
+    if (row <= 0 || column <= 0) {
+        printf("Invalid input\n");
+        exit(0);
+    }
     insert_node(LL, row, column, 0);
     for (int i = 0; i < row; i++) {
         printf("Enter the elements in the row %d: ", i + 1);
+        fgets(buffer, 1023, stdin);
+        data = strtof(buffer, &ptr);
         for (int j = 0; j < column; j++) {
-            scanf("%f", &data);
             if (data != 0)
                 insert_node(LL, i, j, data);
+            data = strtof(ptr, &ptr);
         }
     }
 }
