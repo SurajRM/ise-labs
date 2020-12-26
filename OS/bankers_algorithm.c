@@ -10,6 +10,8 @@ int *input_available_vector(int);
 
 bool is_safe(int **, int **, int *, int, int);
 
+void resource_request(int **, int **, int *, int, int);
+
 int main() {
     int process_count, resource_count;
     int **allocation, **max, *available;
@@ -96,4 +98,28 @@ bool is_safe(int **allocation, int **max, int *available, int process_count, int
             return true;
     }
     return false;
+}
+
+void resource_request(int **allocation, int **max, int *available, int process_id, int resource_count) {
+    int *request = (int *) malloc(resource_count * sizeof(int));
+    int i;
+
+    printf("Enter additional request: ");
+    for (i = 0; i < resource_count; i++) {
+        printf("Request for resource %d: ", i + 1);
+        scanf("%d", &request[i]);
+
+        if (request[i] + allocation[process_id][i] > max[process_id][i]) {
+            printf("error: process %d exceeds max claim\n", process_id + 1);
+            exit(0);
+        }
+
+        if (request[i] > available[i]) {
+            printf("error: resources exceeded\n");
+            exit(0);
+        }
+
+        available[i] -= request[i];
+        allocation[i] += request[i];
+    }
 }
