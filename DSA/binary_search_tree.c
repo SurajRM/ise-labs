@@ -17,7 +17,7 @@ void inorder_traversal(node *);
 
 void postorder_traversal(node *);
 
-void linear_representation(node *);
+void pretty_preorder(node *root);
 
 bool is_leaf_node(node *);
 
@@ -25,8 +25,55 @@ node *delete_node(node *, int);
 
 node *min_value_node(node *);
 
+void delete_bst(node *);
+
 int main() {
-    return 0;
+    int choice, data;
+    node *root = NULL;
+    printf("\tBinary search tree\n");
+    while (true) {
+        printf("\n--------------------------\n");
+        printf("1: Insert node\n2: Delete node\n3: Linear representation\n-1: Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter an integer to be inserted: ");
+                scanf("%d", &data);
+                root = insert_node(root, data);
+                printf("Inorder traversal: ");
+                inorder_traversal(root);
+                printf("\n");
+                break;
+            case 2:
+                printf("Enter an integer to be deleted: ");
+                scanf("%d", &data);
+                root = delete_node(root, data);
+                printf("Inorder traversal: ");
+                inorder_traversal(root);
+                printf("\n");
+                break;
+            case 3:
+                printf("Preorder traversal: ");
+                preorder_traversal(root);
+                printf("\nInorder traversal: ");
+                inorder_traversal(root);
+                printf("\nPostorder traversal: ");
+                postorder_traversal(root);
+                printf("\n");
+                printf("Pretty preorder: ");
+                pretty_preorder(root);
+                printf("\n");
+                break;
+            case -1:
+                delete_bst(root);
+                exit(0);
+            default:
+                printf("\033[1;31mInvalid option\033[0m\n");
+                break;
+        }
+    }
 }
 
 node *create_node(int data) {
@@ -42,7 +89,9 @@ node *insert_node(node *root, int data) {
         root = create_node(data);
     } else if (data < root->data)
         root->left_node = insert_node(root->left_node, data);
-    else
+    else if (data == root->data) {
+        printf("\033[1;31mInsertion failed; data already exists\033[0m\n");
+    } else
         root->right_node = insert_node(root->right_node, data);
     return root;
 }
@@ -75,7 +124,7 @@ bool is_leaf_node(node *root) {
     return root->left_node == NULL && root->right_node == NULL;
 }
 
-void linear_representation(node *root) {
+void pretty_preorder(node *root) {
     if (root == NULL) {
         printf("-");
         return;
@@ -85,15 +134,17 @@ void linear_representation(node *root) {
         return;
     }
     printf("%d(", root->data);
-    linear_representation(root->left_node);
+    pretty_preorder(root->left_node);
     printf(", ");
-    linear_representation(root->right_node);
+    pretty_preorder(root->right_node);
     printf(")");
 }
 
 node *delete_node(node *root, int key) {
-    if (root == NULL)
+    if (root == NULL) {
+        printf("\033[1;31mDeletion failed: %d not found\033[0m\n", key);
         return root;
+    }
     if (key < root->data)
         root->left_node = delete_node(root->left_node, key);
     else if (key > root->data)
@@ -121,4 +172,16 @@ node *min_value_node(node *root) {
         temp = temp->left_node;
 
     return temp;
+}
+
+void delete_bst(node *root) {
+    if (root == NULL)
+        return;
+    if (is_leaf_node(root)) {
+        free(root);
+        return;
+    }
+    delete_bst(root->left_node);
+    delete_bst(root->right_node);
+    free(root);
 }
