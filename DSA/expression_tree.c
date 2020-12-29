@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #define CAPACITY 200
 
@@ -21,6 +22,8 @@ bool is_operator(char);
 
 node *create_node(char);
 
+stack *create_stack();
+
 void preorder_traversal(node *);
 
 void inorder_traversal(node *);
@@ -31,7 +34,27 @@ void push(stack *, node *);
 
 node *pop(stack *);
 
+bool is_empty(stack *);
+
+bool is_full(stack *);
+
+node *create_expression_tree(char expression[CAPACITY]);
+
 int main() {
+    node *root = NULL;
+    char infix[CAPACITY];
+
+    printf("Enter an infix expression: ");
+    scanf("%s", infix); //TODO: Scan an entire line
+
+    root = create_expression_tree(infix);
+    printf("Prefix expression: ");
+    preorder_traversal(root);
+    printf("\nInorder expression: ");
+    inorder_traversal(root);
+    printf("\nPostorder expression: ");
+    postorder_traversal(root);
+    printf("\n");
     return 0;
 }
 
@@ -66,6 +89,12 @@ node *create_node(char symbol) {
     return new_node;
 }
 
+stack *create_stack() {
+    stack *st = (stack *) malloc(sizeof(struct stack));
+    st->top = -1;
+    return st;
+}
+
 void preorder_traversal(node *root) {
     if (root != NULL) {
         printf("%c ", root->data);
@@ -91,16 +120,58 @@ void postorder_traversal(node *root) {
 }
 
 void push(stack *st, node *temp) {
-    if (st->top == CAPACITY - 1)
+    if (is_full(st))
         printf("\033[1;31merror: Stack Overflow\033[0m\n");
     else
         st->items[++(st->top)] = temp;
 }
 
 node *pop(stack *st) {
-    if (st->top == -1) {
+    if (is_empty(st)) {
         printf("\033[1;31merror: Stack underflow\033[1;31m\n");
         return NULL;
     }
     return st->items[(st->top)--];
+}
+
+bool is_empty(stack *st) {
+    return st->top == -1;
+}
+
+bool is_full(stack *st) {
+    return st->top == CAPACITY - 1;
+}
+
+node *create_expression_tree(char expression[CAPACITY]) {
+    stack *tree_st = create_stack();
+    stack *operator_st = create_stack();
+    char symbol;
+    node *new_node = NULL, *temp = NULL;
+    for (int i = 0; expression[i] != '\0'; i++) {
+        symbol = expression[i];
+        new_node = create_node(symbol);
+        if (isalnum(symbol))
+            push(tree_st, new_node);
+        else {
+            if (is_empty(operator_st))
+                push(operator_st, new_node);
+            else {
+                while (!is_empty(operator_st) &&
+                       precedence(operator_st->items[operator_st->top]->data) >= precedence(symbol)) {
+                    temp = pop(operator_st);
+                    temp->right_node = pop(tree_st);
+                    temp->left_node = pop(tree_st);
+                    push(tree_st, temp);
+                }
+                push(operator_st, new_node);
+            }
+        }
+    }
+    while (!is_empty(operator_st)) {
+        temp = pop(operator_st);
+        temp->right_node = pop(tree_st);
+        temp->left_node = pop(tree_st);
+        push(tree_st, temp);
+    }
+    return pop(tree_st);
 }
