@@ -10,11 +10,12 @@ int *input_available_vector(int);
 
 bool is_safe(int **, int **, int *, int, int);
 
-void resource_request(int **, int **, int *, int, int);
+void resource_request(int **, int **, int *, int, int, int);
 
 int main() {
-    int process_count, resource_count;
+    int process_count, resource_count, choice, pid;
     int **allocation, **max, *available;
+    bool safe;
 
     printf("\t\tDeadlock avoidance using Banker's Algorithm.\n");
     printf("Enter the number of processes: ");
@@ -25,13 +26,31 @@ int main() {
     max = input_max_matrix(process_count, resource_count);
     allocation = input_allocation_matrix(process_count, resource_count);
 
+    safe = is_safe(allocation, max, available, process_count, resource_count);
+    if (safe)
+        printf("\033[1;32mThe state is safe\033[0m\n");
+    else {
+        printf("\033[1;31mThe state is unsafe\033[0m\n");
+        exit(0);
+    }
+    while (true) {
+        printf("\nAny additional requests? (1 = Yes | 0 = No): ");
+        scanf("%d", &choice);
+        if (choice == 1) {
+            printf("Enter process no: ");
+            scanf("%d", &pid);
+            pid--;
+            resource_request(allocation, max, available, pid, process_count, resource_count);
+        } else
+            break;
+    }
     return 0;
 }
 
 int *input_available_vector(int resource_count) {
     int *available_vector = (int *) malloc(resource_count * sizeof(int));
     for (int i = 0; i < resource_count; i++) {
-        printf("Enter the number of available instances for resource %d", i + 1);
+        printf("Enter the number of available instances for resource %d: ", i + 1);
         scanf("%d", &available_vector[i]);
     }
 
@@ -44,7 +63,7 @@ int **input_allocation_matrix(int process_count, int resource_count) {
         printf("\nProcess %d:\n", i + 1);
         allocation[i] = (int *) malloc(resource_count * sizeof(int));
         for (int j = 0; j < resource_count; j++) {
-            printf("Allocation for resource: %d", j + 1);
+            printf("Allocation for resource %d: ", j + 1);
             scanf("%d", &allocation[i][j]);
         }
     }
@@ -58,7 +77,7 @@ int **input_max_matrix(int process_count, int resource_count) {
         printf("\nProcess %d:\n", i + 1);
         max[i] = (int *) malloc(resource_count * sizeof(int *));
         for (int j = 0; j < resource_count; j++) {
-            printf("Maximum demand for resource: %d", j + 1);
+            printf("Maximum demand for resource %d: ", j + 1);
             scanf("%d", &max[i][j]);
         }
     }
@@ -85,14 +104,13 @@ bool is_safe(int **allocation, int **max, int *available, int process_count, int
                     if ((max[j][k] - allocation[j][k]) > work[k])
                         flag = true;
                 }
-                if (flag) {
+                if (!flag && !finish[j]) {
                     for (k = 0; k < resource_count; k++)
                         work[k] += allocation[j][k];
                     finish[j] = true;
                     finished++;
                 }
             }
-
         }
         if (finished == process_count)
             return true;
@@ -100,26 +118,31 @@ bool is_safe(int **allocation, int **max, int *available, int process_count, int
     return false;
 }
 
-void resource_request(int **allocation, int **max, int *available, int process_id, int resource_count) {
+void resource_request(int **allocation, int **max, int *available, int pid, int process_count, int resource_count) {
     int *request = (int *) malloc(resource_count * sizeof(int));
-    int i;
-
-    printf("Enter additional request: ");
-    for (i = 0; i < resource_count; i++) {
+    bool safe;
+    for (int i = 0; i < resource_count; i++) {
         printf("Request for resource %d: ", i + 1);
         scanf("%d", &request[i]);
 
-        if (request[i] + allocation[process_id][i] > max[process_id][i]) {
-            printf("error: process %d exceeds max claim\n", process_id + 1);
+        if (request[i] + allocation[pid][i] > max[pid][i]) {
+            printf("\033[1;31merror: process %d exceeds max claim\033[0m\n", pid + 1);
             exit(0);
         }
 
         if (request[i] > available[i]) {
-            printf("error: resources exceeded\n");
+            printf("\033[1;31merror: resources exceeded\033[0m\n");
             exit(0);
         }
 
         available[i] -= request[i];
         allocation[i] += request[i];
+    }
+    safe = is_safe(allocation, max, available, process_count, resource_count);
+    if (safe)
+        printf("\033[1;32mThe state is safe\033[0m\n");
+    else {
+        printf("\033[1;31mThe state is unsafe\033[0m\n");
+        exit(0);
     }
 }
