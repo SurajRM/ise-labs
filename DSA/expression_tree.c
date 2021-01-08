@@ -26,8 +26,6 @@ stack *create_stack();
 
 void preorder_traversal(node *);
 
-void inorder_traversal(node *);
-
 void postorder_traversal(node *);
 
 void push(stack *, node *);
@@ -38,6 +36,8 @@ bool is_empty(stack *);
 
 bool is_full(stack *);
 
+bool check_space(char symbol);
+
 node *create_expression_tree(char expression[CAPACITY]);
 
 int main() {
@@ -45,14 +45,12 @@ int main() {
     char infix[CAPACITY];
 
     printf("Enter an infix expression: ");
-    scanf("%s", infix); //TODO: Scan an entire line
+    scanf("%[^\n]s", infix);
 
     root = create_expression_tree(infix);
     printf("Prefix expression: ");
     preorder_traversal(root);
-    printf("\nInorder expression: ");
-    inorder_traversal(root);
-    printf("\nPostorder expression: ");
+    printf("\nPostfix expression: ");
     postorder_traversal(root);
     printf("\n");
     return 0;
@@ -103,13 +101,6 @@ void preorder_traversal(node *root) {
     }
 }
 
-void inorder_traversal(node *root) {
-    if (root != NULL) {
-        inorder_traversal(root->left_node);
-        printf("%c ", root->data);
-        inorder_traversal(root->right_node);
-    }
-}
 
 void postorder_traversal(node *root) {
     if (root != NULL) {
@@ -128,7 +119,7 @@ void push(stack *st, node *temp) {
 
 node *pop(stack *st) {
     if (is_empty(st)) {
-        printf("\033[1;31merror: Stack underflow\033[1;31m\n");
+        printf("\033[1;31merror: Stack underflow\033[0m\n");
         return NULL;
     }
     return st->items[(st->top)--];
@@ -149,6 +140,8 @@ node *create_expression_tree(char expression[CAPACITY]) {
     node *new_node = NULL, *temp = NULL;
     for (int i = 0; expression[i] != '\0'; i++) {
         symbol = expression[i];
+        if (check_space(symbol))
+            continue;
         new_node = create_node(symbol);
         if (isalnum(symbol))
             push(tree_st, new_node);
@@ -174,4 +167,8 @@ node *create_expression_tree(char expression[CAPACITY]) {
         push(tree_st, temp);
     }
     return pop(tree_st);
+}
+
+bool check_space(char symbol) {
+    return symbol == ' ';
 }
