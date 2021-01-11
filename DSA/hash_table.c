@@ -23,9 +23,13 @@ int hash(int, int);
 
 void insert(hash_table *, int, char string[]);
 
+bool search(hash_table *, int);
+
+item delete(hash_table *, int);
+
 void display(hash_table *);
 
-item deleted_item = {-1, "\0"};
+item dummy_item = {-1, "\0"};
 
 int main() {
     return 0;
@@ -45,7 +49,7 @@ void display(hash_table *ht) {
     for (int i = 0; i < ht->capacity; i++) {
         if (ht->arr[i] && ht->arr[i]->key != -1) {
             empty = false;
-            printf("%d: %s", ht->arr[i]->key, ht->arr[i]->string);
+            printf("%d: %s\n", ht->arr[i]->key, ht->arr[i]->string);
         }
     }
     if (empty)
@@ -84,4 +88,43 @@ item *create_item(int key, char string[STRING_SIZE]) {
     new_item->key = key;
     strcpy(new_item->string, string);
     return new_item;
+}
+
+item delete(hash_table *ht, int key) {
+    int index = hash(key, ht->capacity);
+    int i = index;
+    item result = dummy_item;
+
+    while (ht->arr[i]) {
+        if (ht->arr[i]->key == key) {
+            result = *(ht->arr[i]);
+            free(ht->arr[i]);
+            ht->arr[i] = &dummy_item;
+            return result;
+        }
+        i = (i + 1) % ht->capacity;
+        if (i == index)
+            break;
+    }
+
+    printf("\033[1;31merror: Key not found\033[0m\n");
+    return result;
+}
+
+bool search(hash_table *ht, int key) {
+    int index = hash(key, ht->capacity);
+    int i = index;
+
+    while (ht->arr[i]) {
+        if (ht->arr[i]->key == key) {
+            printf("%d: %s\n", ht->arr[i]->key, ht->arr[i]->string);
+            return true;
+        }
+        i = (i + 1) % ht->capacity;
+        if (i == index)
+            break;
+    }
+
+    printf("\033[1;31merror: Key not found\033[0m\n");
+    return false;
 }
