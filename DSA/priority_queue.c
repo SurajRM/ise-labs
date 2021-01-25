@@ -24,13 +24,67 @@ bool is_full(Heap *);
 void swap(int *, int *);
 
 int main() {
-    return 0;
+    int capacity, choice, temp;
+
+    printf("\t\tPriority queue using heaps\n");
+    printf("Enter the size of the queue: ");
+    scanf("%d", &capacity);
+    if (capacity <= 0) {
+        printf("error: capacity is not positive integer\n");
+        return 0;
+    }
+
+    Heap *hp = create_heap(capacity);
+
+    while (true) {
+        printf("\n1: Insert\n2: Delete\n3: Display queue\n4: Pop max\n5: Display max\n-1: Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter an integer: ");
+                scanf("%d", &temp);
+                insert(hp, temp);
+                print_queue(hp);
+                break;
+            case 2:
+                printf("Enter the index of the element to be deleted: ");
+                scanf("%d", &temp);
+                delete(hp, temp);
+                print_queue(hp);
+                break;
+            case 3:
+                print_queue(hp);
+                break;
+            case 4:
+                temp = pop_max(hp);
+                if (temp != -1)
+                    printf("Max: %d\n", temp);
+                break;
+            case 5:
+                temp = get_max(hp);
+                if (temp != -1)
+                    printf("Max: %d\n", temp);
+                break;
+            case -1:
+                exit(0);
+            default:
+                printf("error: invalid choice\n");
+        }
+    }
 }
 
 void print_queue(Heap *hp) {
-    for (int i = 0; i < hp->size; i++) {
+    if (is_empty(hp)) {
+        printf("Queue empty\n");
+        return;
+    }
+    printf("Queue: ");
+    for (int i = 0; i <= hp->size; i++) {
         printf("%d ", hp->arr[i]);
     }
+    printf("\n");
 }
 
 int get_max(Heap *hp) {
@@ -59,7 +113,7 @@ Heap *create_heap(int capacity) {
 
 bool insert(Heap *hp, int value) {
     if (is_full(hp)) {
-        printf("error: heap full\n");
+        printf("insertion failed: heap full\n");
         return false;
     }
     hp->arr[++(hp->size)] = value;
@@ -68,19 +122,27 @@ bool insert(Heap *hp, int value) {
 }
 
 int pop_max(Heap *hp) {
+    if (is_empty(hp)) {
+        printf("error: queue empty\n");
+        return -1;
+    }
     int max = hp->arr[0];
     hp->arr[0] = hp->arr[hp->size--];
     shift_down(hp, 0);
     return max;
 }
 
-bool delete(Heap *hp, int position) {
+bool delete(Heap *hp, int index) {
     if (is_empty(hp)) {
-        printf("error: heap empty\n");
+        printf("deletion failed: heap empty\n");
         return false;
     }
-    hp->arr[position] = get_max(hp) + 1;
-    shift_up(hp, position);
+    if (index < 0 || index > hp->size) {
+        printf("deletion failed: index out of range\n");
+        return false;
+    }
+    hp->arr[index] = get_max(hp) + 1;
+    shift_up(hp, index);
     pop_max(hp);
     return true;
 }
