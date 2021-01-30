@@ -44,14 +44,11 @@ PageData *input_data() {
 }
 
 bool is_hit(int *page_frame, int size, int data) {
-    bool hit = false;
     for (int i = 0; i < size; i++) {
-        if (page_frame[i] == data) {
-            hit = true;
-            break;
-        }
+        if (page_frame[i] == data)
+            return true;
     }
-    return hit;
+    return false;
 }
 
 void display_pages(int *page_frame, int size) {
