@@ -12,17 +12,11 @@ typedef struct LinkedList {
 } LinkedList;
 
 void input_polynomials(LinkedList *, char msg[]);
-
 node *create_node(float, int);
-
 void polynomial_add_node(LinkedList *, float, int);
-
 void insert_descending(LinkedList *, float, int);
-
 void polynomial_view(LinkedList *);
-
 void multiply_polynomials(LinkedList *, LinkedList *, LinkedList *);
-
 void delete_LinkedList(LinkedList *);
 
 int main() {

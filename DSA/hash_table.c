@@ -16,19 +16,12 @@ typedef struct hash_table {
 } hash_table;
 
 hash_table *create_hash_table(int);
-
 item *create_item(int, char string[]);
-
 int hash(int, int);
-
 bool insert(hash_table *, int, char string[]);
-
 bool search(hash_table *, int);
-
 item delete(hash_table *, int);
-
 void display(hash_table *);
-
 void print_item(item *);
 
 item dummy_item = {-1, "\0"};

@@ -4,22 +4,17 @@
 #include <string.h>
 
 struct queue {
-    int queue_size, message_size;
+    int queue_size;
     char **messages;
     int front, rear;
 };
 typedef struct queue Queue;
 
 void create_queue(Queue *, int, int);
-
 bool is_full(Queue *);
-
 bool is_empty(Queue *);
-
 void enqueue(Queue *, char *);
-
 char *dequeue(Queue *);
-
 void display_queue(Queue *);
 
 int main() {
@@ -114,12 +109,10 @@ int main() {
 
 void create_queue(Queue *q, int size, int msize) {
     q->messages = (char **) malloc(size * sizeof(char *));
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
         q->messages[i] = (char *) malloc(msize * sizeof(char));
-    }
 
     q->queue_size = size;
-    q->message_size = msize;
     q->front = -1;
     q->rear = -1;
 }

@@ -3,13 +3,9 @@
 #include <stdbool.h>
 
 int **input_allocation_matrix(int, int);
-
 int **input_max_matrix(int, int);
-
 int *input_available_vector(int);
-
 bool is_safe(int **, int **, int *, int, int);
-
 void resource_request(int **, int **, int *, int, int, int);
 
 int main() {

@@ -8,23 +8,14 @@ typedef struct node {
 } node;
 
 node *create_node(int);
-
 node *insert_node(node *, int);
-
 void preorder_traversal(node *);
-
 void inorder_traversal(node *);
-
 void postorder_traversal(node *);
-
 void pretty_preorder(node *root);
-
 bool is_leaf_node(node *);
-
 node *delete_node(node *, int);
-
 node *min_value_node(node *);
-
 void delete_bst(node *);
 
 int main() {

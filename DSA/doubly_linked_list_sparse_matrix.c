@@ -15,13 +15,9 @@ typedef struct DoublyLL {
 } DoublyLL;
 
 node *create_node(int, int, float);
-
 void insert_node(DoublyLL *, int, int, float);
-
 void input_matrix(DoublyLL *);
-
 void view_matrix(DoublyLL *);
-
 void delete_doublyll(DoublyLL *);
 
 int main() {

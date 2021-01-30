@@ -12,17 +12,11 @@ typedef struct CircularLL {
 } CircularLL;
 
 void input_long_int(CircularLL *);
-
 node *create_node(int);
-
 void create_circularll(CircularLL *);
-
 void insert_start(CircularLL *, int);
-
 void long_int_view(CircularLL *);
-
 void add_long_int(CircularLL *, CircularLL *, CircularLL *);
-
 void delete_circularll(CircularLL *);
 
 int main() {

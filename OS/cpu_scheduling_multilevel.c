@@ -18,9 +18,8 @@ void fcfs(int q[], int initialwaittime, int np) {
     }
 
     printf("\nProcess\t\tBurst time\t\tWaiting time\t\tTurnaround time\n");
-    for (int i = 0; i < np; i++) {
+    for (int i = 0; i < np; i++)
         printf("P%d\t\t%d\t\t\t%d\t\t\t%d\n", p++, q[i], wait[i], turn[i]);
-    }
     printf("\nAverage Waiting time: %.2f\nAverage Turn-around time: %.2f\n\n\n", (float)waitsum / np, (float)turnsum / np);
 }
 

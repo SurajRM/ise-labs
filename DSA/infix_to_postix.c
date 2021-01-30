@@ -9,19 +9,12 @@ int top;
 int stack[200];
 
 int pop();
-
 int precedence(char);
-
 int is_empty();
-
 void infix_to_postfix();
-
 int check_space(char);
-
 void push(long int);
-
 bool validity(int, int);
-
 bool is_operator(char);
 
 int main() {

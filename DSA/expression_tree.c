@@ -17,27 +17,16 @@ typedef struct stack {
 } stack;
 
 int precedence(char);
-
 bool is_operator(char);
-
 node *create_node(char);
-
 stack *create_stack();
-
 void preorder_traversal(node *);
-
 void postorder_traversal(node *);
-
 void push(stack *, node *);
-
 node *pop(stack *);
-
 bool is_empty(stack *);
-
 bool is_full(stack *);
-
 bool check_space(char symbol);
-
 node *create_expression_tree(char expression[CAPACITY]);
 
 int main() {

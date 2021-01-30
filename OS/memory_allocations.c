@@ -3,9 +3,7 @@
 #include <stdbool.h>
 
 void first_fit(int *, int *, int, int);
-
 void best_fit(int *, int *, int, int);
-
 void worst_fit(int *, int *, int, int);
 
 int main() {

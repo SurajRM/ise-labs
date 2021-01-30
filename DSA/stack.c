@@ -10,17 +10,11 @@ struct stack {
 typedef struct stack Stack;
 
 void create_stack(Stack *, int);
-
 bool is_full(Stack *);
-
 bool is_empty(Stack *);
-
 int peek(Stack *);
-
 void display_items(Stack *);
-
 void push(Stack *, int);
-
 int pop(Stack *);
 
 int main() {
