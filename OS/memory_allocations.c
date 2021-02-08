@@ -28,17 +28,15 @@ int main() {
         scanf("%d", &processes[i]);
     }
 
-    printf("\n\t\t\tFIRST FIT\n\n");
     first_fit(blocks, processes, block_count, process_count);
-    printf("\n\t\t\tBEST FIT\n\n");
     best_fit(blocks, processes, block_count, process_count);
-    printf("\n\t\t\tWORST FIT\n\n");
     worst_fit(blocks, processes, block_count, process_count);
 
     return 0;
 }
 
 void best_fit(int *blocks, int *processes, int block_count, int process_count) {
+    printf("\n\t\t\tBEST FIT\n\n");
     int min, index;
     int b[block_count];
     for (int i = 0; i < block_count; i++)
@@ -64,6 +62,7 @@ void best_fit(int *blocks, int *processes, int block_count, int process_count) {
 }
 
 void worst_fit(int *blocks, int *processes, int block_count, int process_count) {
+    printf("\n\t\t\tWORST FIT\n\n");
     int max, index;
     int b[block_count];
     for (int i = 0; i < block_count; i++)
@@ -89,6 +88,7 @@ void worst_fit(int *blocks, int *processes, int block_count, int process_count) 
 }
 
 void first_fit(int *blocks, int *processes, int block_count, int process_count) {
+    printf("\n\t\t\tFIRST FIT\n\n");
     int b[block_count];
     for (int i = 0; i < block_count; i++)
         b[i] = blocks[i];
