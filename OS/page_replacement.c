@@ -19,11 +19,9 @@ void optimal(PageData *);
 int main() {
     printf("\t\tPage replacement algorithms\n");
     PageData *pd = input_data();
-    printf("\n\t\tFifo page replacement\n");
+
     fifo(pd);
-    printf("\n\t\tLRU page replacement\n");
     lru(pd);
-    printf("\n\t\tOptimal page replacement\n");
     optimal(pd);
 }
 
@@ -60,13 +58,14 @@ void display_pages(int *page_frame, int size) {
 }
 
 void fifo(PageData *pd) {
+    printf("\nFifo page replacement\n");
     int page_faults = 0;
     int page_frame[pd->frames_count];
     for (int i = 0; i < pd->frames_count; i++)
         page_frame[i] = -1;
 
     for (int i = 0; i < pd->ref_string_len; i++) {
-        printf("For page %d: ", pd->ref_string[i]);
+        printf("\tFor page %d: ", pd->ref_string[i]);
         if (!is_hit(page_frame, pd->frames_count, pd->ref_string[i])) {
             for (int j = 0; j < pd->frames_count - 1; j++)
                 page_frame[j] = page_frame[j + 1];
@@ -76,10 +75,11 @@ void fifo(PageData *pd) {
         } else
             printf("No page fault\n");
     }
-    printf("Total number of page faults: %d\n", page_faults);
+    printf("\tTotal number of page faults: %d\n", page_faults);
 }
 
 void lru(PageData *pd) {
+    printf("\nLRU page replacement\n");
     int page_faults = 0, page, min, rep_index = 0;
     bool found;
     int page_frame[pd->frames_count], least[pd->frames_count];
@@ -87,7 +87,7 @@ void lru(PageData *pd) {
         page_frame[i] = -1;
 
     for (int i = 0; i < pd->ref_string_len; i++) {
-        printf("For page %d: ", pd->ref_string[i]);
+        printf("\tFor page %d: ", pd->ref_string[i]);
         if (!is_hit(page_frame, pd->frames_count, pd->ref_string[i])) {
             for (int j = 0; j < pd->frames_count; j++) {
                 page = page_frame[j];
@@ -116,10 +116,11 @@ void lru(PageData *pd) {
         } else
             printf("No page fault\n");
     }
-    printf("Total number of page faults: %d\n", page_faults);
+    printf("\tTotal number of page faults: %d\n", page_faults);
 }
 
 void optimal(PageData *pd) {
+    printf("\nOptimal page replacement\n");
     int page_faults = 0, page, max, rep_index;
     int page_frame[pd->frames_count], near[pd->frames_count];
     bool found;
@@ -127,7 +128,7 @@ void optimal(PageData *pd) {
         page_frame[i] = -1;
 
     for (int i = 0; i < pd->ref_string_len; i++) {
-        printf("For page %d: ", pd->ref_string[i]);
+        printf("\tFor page %d: ", pd->ref_string[i]);
         if (!is_hit(page_frame, pd->frames_count, pd->ref_string[i])) {
             for (int j = 0; j < pd->frames_count; j++) {
                 page = page_frame[j];
@@ -156,5 +157,5 @@ void optimal(PageData *pd) {
         } else
             printf("No page fault\n");
     }
-    printf("Total number of page faults: %d\n", page_faults);
+    printf("\tTotal number of page faults: %d\n", page_faults);
 }
