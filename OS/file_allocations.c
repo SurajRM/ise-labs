@@ -22,6 +22,7 @@ void linked(Memory *, Files *);
 void indexed(Memory *, Files *);
 
 int main() {
+    printf("\t\tFile allocations\n");
     Memory *memory = initialize();
     printf("Maximum file size supported: %dKB\n", memory->block_size * memory->block_count);
     Files *files = get_files_data();
@@ -82,7 +83,7 @@ int get_free_block(Memory *mem) {
 }
 
 void sequential(Memory *mem, Files *files) {
-    printf("\nSequential memory allocation\n");
+    printf("\nSequential file allocation\n");
     int blocks_needed, free_blocks, j;
     bool allocated;
 
@@ -114,7 +115,7 @@ void sequential(Memory *mem, Files *files) {
 }
 
 void linked(Memory *mem, Files *files) {
-    printf("\nLinked memory allocation\n");
+    printf("\nLinked file allocation\n");
     int blocks_needed, *blocks;
     bool allocation_possible;
 
@@ -144,7 +145,7 @@ void linked(Memory *mem, Files *files) {
 }
 
 void indexed(Memory *mem, Files *files) {
-    printf("\nIndexed memory allocation\n");
+    printf("\nIndexed file allocation\n");
     int blocks_needed, **files_blocks;
     bool allocation_possible;
     files_blocks = (int **) malloc(files->file_count * sizeof(int));
