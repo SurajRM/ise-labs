@@ -2,14 +2,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct stack {
+typedef struct stack {
     int *items;
-    unsigned capacity;
+    int capacity;
     int top;
-};
-typedef struct stack Stack;
+} Stack;
 
-void create_stack(Stack *, int);
+Stack *create_stack(int);
 bool is_full(Stack *);
 bool is_empty(Stack *);
 int peek(Stack *);
@@ -18,71 +17,81 @@ void push(Stack *, int);
 int pop(Stack *);
 
 int main() {
-    Stack st;
-    int capacity, choice, temp;
+    int capacity, choice, temp, item;
+
     printf("Enter the size of the stack: ");
     scanf("%d", &capacity);
-    create_stack(&st, capacity);
+    if (capacity <= 0) {
+        printf("Invalid input\n");
+        exit(0);
+    }
+    Stack *st = create_stack(capacity);
     printf("Stack of size %d created\n", capacity);
+
     while (true) {
-        printf("\nSelect an operation:\n\
-    1: Push\n\
-    2: Pop\n\
-    3: Peek\n\
-    4: Check if stack is full\n\
-    5: Check if stack is empty\n\
-    6: Display items in stack\n\
-    -1: Exit\n");
+        printf("1: Push\n");
+        printf("2: Pop\n");
+        printf("3: Peek\n");
+        printf("4: Check if stack is full\n");
+        printf("5: Check if stack is empty\n");
+        printf("6: Display items in stack\n");
+        printf("-1: Exit\n");
+        printf("Enter your choice: ");
         scanf("%d", &choice);
+
         switch (choice) {
             case 1:
                 printf("Enter the item to be pushed: ");
-                int item;
                 scanf("%d", &item);
-                push(&st, item);
+                push(st, item);
                 break;
             case 2:
-                temp = pop(&st);
-                if (temp == -100)
+                temp = pop(st);
+                if (temp == -2)
                     printf("The stack is empty\n");
                 else
                     printf("Popped item is %d\n", temp);
                 break;
             case 3:
-                temp = peek(&st);
-                if (temp == -100)
+                temp = peek(st);
+                if (temp == -2)
                     printf("The stack is empty\n");
                 else
                     printf("The latest item is %d\n", temp);
                 break;
             case 4:
-                if (is_full(&st))
+                if (is_full(st))
                     printf("The stack is full\n");
                 else
                     printf("The stack is not full\n");
                 break;
             case 5:
-                if (is_empty(&st))
+                if (is_empty(st))
                     printf("The stack is empty\n");
                 else
                     printf("The stack is not empty\n");
                 break;
             case 6:
-                display_items(&st);
+                display_items(st);
                 break;
             case -1:
                 exit(0);
             default:
                 printf("Invalid option\n");
+                getchar();
                 break;
         }
+        printf("\n");
     }
 }
 
-void create_stack(Stack *s, int max_capacity) {
-    s->items = (int *) malloc(max_capacity * sizeof(int));
-    s->top = -1;
-    s->capacity = max_capacity;
+Stack *create_stack(int max_capacity) {
+    Stack *st = (Stack *) malloc(sizeof(Stack));
+    st->items = (int *) malloc(max_capacity * sizeof(int));
+    st->top = -1;
+    st->capacity = max_capacity;
+
+    return st;
 }
 
 bool is_full(Stack *s) {
@@ -100,7 +109,7 @@ bool is_empty(Stack *s) {
 int peek(Stack *s) {
     if (!is_empty(s))
         return s->items[s->top];
-    return -100;
+    return -2;
 }
 
 void display_items(Stack *s) {
@@ -108,9 +117,8 @@ void display_items(Stack *s) {
         printf("STACK EMPTY\n");
     else {
         printf("Items: ");
-        for (int i = s->top; i >= 0; i--) {
+        for (int i = s->top; i >= 0; i--)
             printf("%d ", s->items[i]);
-        }
         printf("\n");
     }
 }
@@ -118,16 +126,12 @@ void display_items(Stack *s) {
 void push(Stack *s, int new_item) {
     if (is_full(s))
         printf("STACK FULL\n");
-    else {
-        s->top++;
-        s->items[s->top] = new_item;
-    }
+    else
+        s->items[++s->top] = new_item;
 }
 
 int pop(Stack *s) {
-    if (!is_empty(s)) {
-        s->top--;
-        return s->items[s->top + 1];
-    }
-    return -100;
+    if (!is_empty(s))
+        return s->items[--s->top + 1];
+    return -2;
 }
