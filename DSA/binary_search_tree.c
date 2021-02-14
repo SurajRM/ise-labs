@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define BOLD_RED "\e[1;31m"
+#define RESET "\e[0m"
+
 typedef struct node {
     int data;
     struct node *left_node, *right_node;
@@ -12,7 +15,7 @@ node *insert_node(node *, int);
 void preorder_traversal(node *);
 void inorder_traversal(node *);
 void postorder_traversal(node *);
-void pretty_preorder(node *root);
+void pretty_preorder(node *);
 bool is_leaf_node(node *);
 node *delete_node(node *, int);
 node *min_value_node(node *);
@@ -21,29 +24,29 @@ void delete_bst(node *);
 int main() {
     int choice, data;
     node *root = NULL;
-    printf("\tBinary search tree\n");
+    printf("\t\tBinary search tree\n");
     while (true) {
-        printf("\n--------------------------\n");
-        printf("1: Insert node\n2: Delete node\n3: Linear representation\n-1: Exit\n");
+        printf("1: Insert node\n");
+        printf("2: Delete node\n");
+        printf("3: Linear representation\n");
+        printf("-1: Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1:
-                printf("Enter an integer to be inserted: ");
+                printf("Enter an integer: ");
                 scanf("%d", &data);
                 root = insert_node(root, data);
                 printf("Inorder traversal: ");
                 inorder_traversal(root);
-                printf("\n");
                 break;
             case 2:
-                printf("Enter an integer to be deleted: ");
+                printf("Enter an integer: ");
                 scanf("%d", &data);
                 root = delete_node(root, data);
                 printf("Inorder traversal: ");
                 inorder_traversal(root);
-                printf("\n");
                 break;
             case 3:
                 printf("Preorder traversal: ");
@@ -55,15 +58,15 @@ int main() {
                 printf("\n");
                 printf("Pretty preorder: ");
                 pretty_preorder(root);
-                printf("\n");
                 break;
             case -1:
                 delete_bst(root);
                 exit(0);
             default:
-                printf("\033[1;31mInvalid option\033[0m\n");
+                printf(BOLD_RED "error:" RESET "invalid option\n");
                 break;
         }
+        printf("\n\n");
     }
 }
 
@@ -81,7 +84,7 @@ node *insert_node(node *root, int data) {
     } else if (data < root->data)
         root->left_node = insert_node(root->left_node, data);
     else if (data == root->data) {
-        printf("\033[1;31mInsertion failed; data already exists\033[0m\n");
+        printf(BOLD_RED "insertion failed:" RESET " data already exists\n");
     } else
         root->right_node = insert_node(root->right_node, data);
     return root;
@@ -133,9 +136,10 @@ void pretty_preorder(node *root) {
 
 node *delete_node(node *root, int key) {
     if (root == NULL) {
-        printf("\033[1;31mDeletion failed: %d not found\033[0m\n", key);
+        printf(BOLD_RED "deletion failed:" RESET " %d not found\n", key);
         return root;
     }
+
     if (key < root->data)
         root->left_node = delete_node(root->left_node, key);
     else if (key > root->data)
@@ -145,7 +149,8 @@ node *delete_node(node *root, int key) {
             node *temp = root->right_node;
             free(root);
             return temp;
-        } else if (root->right_node == NULL) {
+        }
+        if (root->right_node == NULL) {
             node *temp = root->left_node;
             free(root);
             return temp;

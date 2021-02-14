@@ -25,7 +25,7 @@ int main() {
     L2 = create_circularll();
     ans = create_circularll();
 
-    printf("\t\tAddition of long positive integers using circular queue\n");
+    printf("\t\tAddition of long positive integers using circular linked list\n");
     input_long_int(L1);
     input_long_int(L2);
 
