@@ -3,14 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct queue {
+#define STRING_SIZE 512
+
+typedef struct queue {
     int queue_size;
     char **messages;
     int front, rear;
-};
-typedef struct queue Queue;
+} Queue;
 
-void create_queue(Queue *, int, int);
+Queue *create_queue(int);
 bool is_full(Queue *);
 bool is_empty(Queue *);
 void enqueue(Queue *, char *);
@@ -18,37 +19,29 @@ char *dequeue(Queue *);
 void display_queue(Queue *);
 
 int main() {
-    Queue que;
     int choice;
-    int queue_size, max_message_size;
-    float queue_size2, max_message_size2;
+    int queue_size;
+    float queue_size2;
+    char msg[STRING_SIZE];
 
     printf("Enter the size of the queue: ");
     scanf("%f", &queue_size2);
     queue_size = (int) queue_size2;
-    if (queue_size != queue_size2 || queue_size2 < 0) {
+    if ((float) queue_size != queue_size2 || queue_size2 < 0) {
         printf("Invalid input\n");
-        exit(0);
+        exit(1);
     }
-    printf("Enter the length of the maximum message: ");
-    scanf("%f", &max_message_size2);
-    max_message_size = (int) max_message_size2;
-    if (max_message_size != max_message_size2 || max_message_size < 0) {
-        printf("Invalid input\n");
-        exit(0);
-    }
-    max_message_size++;
 
-    char msg[max_message_size];
-    create_queue(&que, queue_size, max_message_size);
-    printf("\nQueue of size %d created\n", queue_size);
+    Queue *que = create_queue(queue_size);
+    printf("Queue of size %d created\n\n", queue_size);
 
     while (true) {
-        printf("\n--------------------------\n");
-        printf("1: IsFull\n2: IsEmpty\n3: Display contents\n");
-        if (!is_full(&que)) {
+        printf("1: Check if queue is full\n");
+        printf("2: Check if queue is empty\n");
+        printf("3: Display contents\n");
+        if (!is_full(que)) {
             printf("4: Enqueue\n");
-            if (!is_empty(&que))
+            if (!is_empty(que))
                 printf("5: Dequeue\n");
         } else
             printf("4: Dequeue\n");
@@ -56,15 +49,11 @@ int main() {
         printf("Select an operation: ");
         scanf("%d", &choice);
 
-        if (is_empty(&que) && choice == 5) {
-            printf("Invalid option\n");
-            continue;
-        }
-        if (is_full(&que)) {
+        if (is_full(que)) {
             if (choice == 4)
                 choice++;
             else if (choice == 5) {
-                printf("Invalid option\n");
+                printf("Invalid option\n\n");
                 continue;
             }
         }
@@ -74,29 +63,33 @@ int main() {
                 printf("Enter the message to be enqueued: ");
                 getchar();
                 scanf("%[^\n]s", msg);
-                enqueue(&que, msg);
-                display_queue(&que);
+                enqueue(que, msg);
+                display_queue(que);
                 break;
             case 5:
-                strcpy(msg, dequeue(&que));
-                if (strcmp(msg, ""))
+                if (is_empty(que)) {
+                    printf("Invalid option\n");
+                    break;
+                }
+                strcpy(msg, dequeue(que));
+                if (strcmp(msg, "") != 0)
                     printf("The dequeued message is: %s\n", msg);
-                display_queue(&que);
+                display_queue(que);
                 break;
             case 1:
-                if (is_full(&que))
+                if (is_full(que))
                     printf("The queue is full\n");
                 else
                     printf("The queue is not full\n");
                 break;
             case 2:
-                if (is_empty(&que))
+                if (is_empty(que))
                     printf("The queue is empty\n");
                 else
                     printf("The queue is not empty\n");
                 break;
             case 3:
-                display_queue(&que);
+                display_queue(que);
                 break;
             case -1:
                 exit(0);
@@ -104,17 +97,21 @@ int main() {
                 printf("Invalid option\n");
                 break;
         }
+        printf("\n");
     }
 }
 
-void create_queue(Queue *q, int size, int msize) {
+Queue *create_queue(int size) {
+    Queue *q = (Queue *) malloc(sizeof(Queue));
     q->messages = (char **) malloc(size * sizeof(char *));
     for (int i = 0; i < size; i++)
-        q->messages[i] = (char *) malloc(msize * sizeof(char));
+        q->messages[i] = (char *) malloc(STRING_SIZE * sizeof(char));
 
     q->queue_size = size;
     q->front = -1;
     q->rear = -1;
+
+    return q;
 }
 
 bool is_full(Queue *q) {
@@ -132,9 +129,9 @@ void enqueue(Queue *q, char *message) {
     } else if (is_full(q)) {
         printf("QUEUE FULL\n");
         return;
-    } else {
+    } else
         q->rear = (q->rear + 1) % q->queue_size;
-    }
+
     strcpy(q->messages[q->rear], message);
 }
 
@@ -147,9 +144,8 @@ char *dequeue(Queue *q) {
     if (q->front == q->rear) {
         q->front = -1;
         q->rear = -1;
-    } else {
+    } else
         q->front = (q->front + 1) % q->queue_size;
-    }
 
     return message;
 }
@@ -159,12 +155,11 @@ void display_queue(Queue *q) {
         printf("QUEUE EMPTY\n");
         return;
     }
+
     printf("\nQueue: [");
-    int i = q->front;
-    while (i != q->rear) {
+    for (int i = q->front; i != q->rear; i = (i + 1) % q->queue_size) {
         printf("\"%s\"", q->messages[i]);
         printf(", ");
-        i = (i + 1) % q->queue_size;
     }
     printf("\"%s\"]\n", q->messages[q->rear]);
 }
