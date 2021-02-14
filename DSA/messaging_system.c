@@ -24,6 +24,7 @@ int main() {
     float queue_size2;
     char msg[STRING_SIZE];
 
+    printf("\t\tMessaging system\n");
     printf("Enter the size of the queue: ");
     scanf("%f", &queue_size2);
     queue_size = (int) queue_size2;

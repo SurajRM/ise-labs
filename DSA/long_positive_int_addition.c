@@ -13,29 +13,29 @@ typedef struct CircularLL {
 
 void input_long_int(CircularLL *);
 node *create_node(int);
-void create_circularll(CircularLL *);
+CircularLL *create_circularll();
 void insert_start(CircularLL *, int);
 void long_int_view(CircularLL *);
 void add_long_int(CircularLL *, CircularLL *, CircularLL *);
 void delete_circularll(CircularLL *);
 
 int main() {
-    CircularLL ans, L1, L2;
-    create_circularll(&L1);
-    create_circularll(&L2);
-    create_circularll(&ans);
+    CircularLL *ans, *L1, *L2;
+    L1 = create_circularll();
+    L2 = create_circularll();
+    ans = create_circularll();
 
-    printf("            Addition of long positive integers using circular queue\n");
-    input_long_int(&L1);
-    input_long_int(&L2);
+    printf("\t\tAddition of long positive integers using circular queue\n");
+    input_long_int(L1);
+    input_long_int(L2);
 
-    add_long_int(&ans, &L1, &L2);
+    add_long_int(ans, L1, L2);
     printf("Sum: ");
-    long_int_view(&ans);
+    long_int_view(ans);
 
-    delete_circularll(&L1);
-    delete_circularll(&L2);
-    delete_circularll(&ans);
+    delete_circularll(L1);
+    delete_circularll(L2);
+    delete_circularll(ans);
     return 0;
 }
 
@@ -48,7 +48,7 @@ void input_long_int(CircularLL *LL) {
         if (isdigit(chr) == 0) {
             printf("Invalid input\n");
             delete_circularll(LL);
-            exit(0);
+            exit(1);
         }
         digit = chr - '0';
         insert_start(LL, digit);
@@ -63,11 +63,14 @@ node *create_node(int digit) {
     return temp;
 }
 
-void create_circularll(CircularLL *LL) {
+CircularLL *create_circularll() {
+    CircularLL *LL = (CircularLL *) malloc(sizeof(CircularLL));
     node *new_node = (node *) malloc(sizeof(node));
     LL->head = new_node;
     LL->head->data = 0;
     LL->head->next = LL->head;
+
+    return LL;
 }
 
 void insert_start(CircularLL *LL, int digit) {
@@ -94,7 +97,7 @@ void long_int_view(CircularLL *LL) {
 
 void add_long_int(CircularLL *ans, CircularLL *L1, CircularLL *L2) {
     int carry = 0, sum, digit;
-    node *left_over, *tail_node;
+    node *left_over, *last_node;
 
     if (L1->head->data == 0 && L2->head->data == 0)
         return;
@@ -120,16 +123,17 @@ void add_long_int(CircularLL *ans, CircularLL *L1, CircularLL *L2) {
 
     if (p != L1->head) {
         left_over = p;
-        tail_node = L1->head;
+        last_node = L1->head;
     } else {
         left_over = q;
-        tail_node = L2->head;
+        last_node = L2->head;
     }
 
-    while (left_over != tail_node) {
+    while (left_over != last_node) {
         sum = left_over->data + carry;
         digit = sum % 10;
         carry = sum / 10;
+
         insert_start(ans, digit);
         left_over = left_over->next;
     }

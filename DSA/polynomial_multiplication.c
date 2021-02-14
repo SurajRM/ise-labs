@@ -11,7 +11,7 @@ typedef struct LinkedList {
     node *head;
 } LinkedList;
 
-void input_polynomials(LinkedList *, char msg[]);
+void input_polynomials(LinkedList *, char *msg);
 node *create_node(float, int);
 void polynomial_add_node(LinkedList *, float, int);
 void insert_descending(LinkedList *, float, int);
@@ -21,7 +21,7 @@ void delete_LinkedList(LinkedList *);
 
 int main() {
     LinkedList L1 = {NULL}, L2 = {NULL}, ans = {NULL};
-    printf("            Multiplication of Two Polynomials\n");
+    printf("\t\tMultiplication of Two Polynomials\n");
     input_polynomials(&L1, "multiplicand");
     printf("\n");
     input_polynomials(&L2, "multiplier");
@@ -42,14 +42,14 @@ int main() {
     return 0;
 }
 
-void input_polynomials(LinkedList *LL, char msg[]) {
+void input_polynomials(LinkedList *LL, char *msg) {
     int count, exponent;
     float count2, coefficient, exponent2;
     printf("Enter the number of coefficients in the %s: ", msg);
     scanf("%f", &count2);
     count = (int) count2;
 
-    if (count != count2 || count2 < 0) {
+    if ((float) count != count2 || count2 < 0) {
         printf("Invalid input\n");
         exit(0);
     }
@@ -65,7 +65,7 @@ void input_polynomials(LinkedList *LL, char msg[]) {
         printf("Enter the exponent part %d: ", i + 1);
         scanf("%f", &exponent2);
         exponent = (int) exponent2;
-        if (exponent != exponent2 || exponent2 < 0) {
+        if ((float) exponent != exponent2 || exponent2 < 0) {
             printf("error: Exponents can only be non negative integers\n");
             goto label;
         }
@@ -196,11 +196,11 @@ void multiply_polynomials(LinkedList *ans, LinkedList *L1, LinkedList *L2) {
 }
 
 void delete_LinkedList(LinkedList *LL) {
-    node *temp;
-    node *ptr = LL->head;
-    while (ptr) {
-        temp = ptr->next;
-        free(ptr);
-        ptr = temp;
+    node *next_node;
+    node *current_node = LL->head;
+    while (current_node) {
+        next_node = current_node->next;
+        free(current_node);
+        current_node = next_node;
     }
 }

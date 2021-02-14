@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define STRING_SIZE 512
+
 typedef struct node {
     int row;
     int column;
@@ -39,6 +41,7 @@ node *create_node(int row, int column, float data) {
     new_node->data = data;
     new_node->previous = NULL;
     new_node->next = NULL;
+
     return new_node;
 }
 
@@ -57,19 +60,21 @@ void insert_node(DoublyLL *LL, int row, int column, float data) {
 void input_matrix(DoublyLL *LL) {
     int row, column;
     float data;
-    char buffer[1024];
+    char buffer[STRING_SIZE];
     char *ptr;
+
     printf("Enter the order of the matrix: ");
     scanf("%u %u", &row, &column);
     getchar();
     if (row <= 0 || column <= 0) {
         printf("Invalid input\n");
-        exit(0);
+        exit(1);
     }
     insert_node(LL, row, column, 0);
+
     for (int i = 0; i < row; i++) {
         printf("Enter the elements in the row %d: ", i + 1);
-        fgets(buffer, 1023, stdin);
+        fgets(buffer, STRING_SIZE - 1, stdin);
         data = strtof(buffer, &ptr);
         for (int j = 0; j < column; j++) {
             if (data != 0)

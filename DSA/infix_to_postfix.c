@@ -19,6 +19,7 @@ bool is_operator(char);
 
 int main() {
     top = -1;
+    printf("\t\tInfix to postfix\n");
     printf("Input the infix expression: ");
     scanf("%s", infix_string);
 

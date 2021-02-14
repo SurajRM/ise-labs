@@ -22,6 +22,7 @@ void pop_top_n_ele(Stack *, int);
 int main() {
     int capacity, choice, temp, item;
 
+    printf("\t\tStack\n");
     printf("Enter the size of the stack: ");
     scanf("%d", &capacity);
     if (capacity <= 0) {
