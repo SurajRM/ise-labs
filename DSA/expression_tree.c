@@ -2,13 +2,15 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
-#define CAPACITY 200
+#define CAPACITY 512
+#define BOLD_RED "\e[1;31m"
+#define RESET "\e[0m"
 
 typedef struct node {
     char data;
-    struct node *left_node;
-    struct node *right_node;
+    struct node *left_node, *right_node;
 } node;
 
 typedef struct stack {
@@ -28,6 +30,7 @@ bool is_empty(stack *);
 bool is_full(stack *);
 bool check_space(char symbol);
 node *create_expression_tree(char expression[CAPACITY]);
+bool validity(char *, int, int);
 
 int main() {
     node *root = NULL;
@@ -37,6 +40,7 @@ int main() {
     scanf("%[^\n]s", infix);
 
     root = create_expression_tree(infix);
+
     printf("Prefix expression: ");
     preorder_traversal(root);
     printf("\nPostfix expression: ");
@@ -73,12 +77,14 @@ node *create_node(char symbol) {
     new_node->data = symbol;
     new_node->right_node = NULL;
     new_node->left_node = NULL;
+
     return new_node;
 }
 
 stack *create_stack() {
     stack *st = (stack *) malloc(sizeof(struct stack));
     st->top = -1;
+
     return st;
 }
 
@@ -101,17 +107,17 @@ void postorder_traversal(node *root) {
 
 void push(stack *st, node *temp) {
     if (is_full(st))
-        printf("\033[1;31merror: Stack Overflow\033[0m\n");
+        printf(BOLD_RED "error:" RESET "stack overflow\n");
     else
-        st->items[++(st->top)] = temp;
+        st->items[++st->top] = temp;
 }
 
 node *pop(stack *st) {
     if (is_empty(st)) {
-        printf("\033[1;31merror: Stack underflow\033[0m\n");
+        printf(BOLD_RED "error:" RESET "stack underflow\n");
         return NULL;
     }
-    return st->items[(st->top)--];
+    return st->items[st->top--];
 }
 
 bool is_empty(stack *st) {
@@ -122,7 +128,11 @@ bool is_full(stack *st) {
     return st->top == CAPACITY - 1;
 }
 
-node *create_expression_tree(char expression[CAPACITY]) {
+node *create_expression_tree(char *expression) {
+    if (!validity(expression, 0, (int) strlen(expression) - 1)) {
+        printf(BOLD_RED "error:" RESET "invalid expression\n");
+        exit(1);
+    }
     stack *tree_st = create_stack();
     stack *operator_st = create_stack();
     char symbol;
@@ -149,6 +159,7 @@ node *create_expression_tree(char expression[CAPACITY]) {
             }
         }
     }
+
     while (!is_empty(operator_st)) {
         temp = pop(operator_st);
         temp->right_node = pop(tree_st);
@@ -160,4 +171,44 @@ node *create_expression_tree(char expression[CAPACITY]) {
 
 bool check_space(char symbol) {
     return symbol == ' ';
+}
+
+bool validity(char *infix, int start, int end) {
+    int len = end - start + 1, paren;
+
+    if (len == 0 || infix[start] == ')')
+        return false;
+    if (len == 1 && isalpha(infix[start]))
+        return true;
+
+    if (infix[start] == '(') {
+        paren = 1;
+        for (int i = start + 1; i <= end; i++) {
+            if (check_space(infix[i]))
+                continue;
+            if (infix[i] == '(')
+                paren++;
+            else if (infix[i] == ')')
+                paren--;
+            if (paren == 0) {
+                if (i == end)
+                    return validity(infix, start + 1, end - 1);
+                else if (!is_operator(infix[i + 1]))
+                    return false;
+                else
+                    return validity(infix, start + 1, i - 1) && validity(infix, i + 2, end);
+            }
+        }
+        return false;
+    } else {
+        for (int i = start; i <= end; i++) {
+            if (check_space(infix[i]))
+                continue;
+            if (infix[i] == '(' || infix[i] == ')')
+                return false;
+            if (is_operator(infix[i]))
+                return validity(infix, start, i - 1) && validity(infix, i + 1, end);
+        }
+    }
+    return true;
 }
