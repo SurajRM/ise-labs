@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define BOLD_RED "\e[1;31m"
+#define RESET "\e[0m"
+
 typedef struct heap {
     int *arr;
     int size;
@@ -30,14 +33,19 @@ int main() {
     printf("Enter the size of the queue: ");
     scanf("%d", &capacity);
     if (capacity <= 0) {
-        printf("error: capacity is not positive integer\n");
+        printf(BOLD_RED "error:" RESET "capacity is not positive integer\n");
         return 0;
     }
 
     Heap *hp = create_heap(capacity);
 
     while (true) {
-        printf("\n1: Insert\n2: Delete\n3: Display queue\n4: Pop max\n5: Display max\n-1: Quit\n");
+        printf("1: Insert\n");
+        printf("2: Delete\n");
+        printf("3: Display queue\n");
+        printf("4: Pop max\n");
+        printf("5: Display max\n");
+        printf("-1: Quit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -70,8 +78,9 @@ int main() {
             case -1:
                 exit(0);
             default:
-                printf("error: invalid choice\n");
+                printf(BOLD_RED "error:" RESET " invalid choice\n");
         }
+        printf("\n");
     }
 }
 
@@ -89,7 +98,7 @@ void print_queue(Heap *hp) {
 
 int get_max(Heap *hp) {
     if (is_empty(hp)) {
-        printf("error: queue empty\n");
+        printf(BOLD_RED "error:" RESET " queue empty\n");
         return -1;
     }
     return hp->arr[0];
@@ -113,17 +122,17 @@ Heap *create_heap(int capacity) {
 
 bool insert(Heap *hp, int value) {
     if (is_full(hp)) {
-        printf("insertion failed: heap full\n");
+        printf(BOLD_RED "error:" RESET " insertion failed: heap full\n");
         return false;
     }
-    hp->arr[++(hp->size)] = value;
+    hp->arr[++hp->size] = value;
     shift_up(hp, hp->size);
     return true;
 }
 
 int pop_max(Heap *hp) {
     if (is_empty(hp)) {
-        printf("error: queue empty\n");
+        printf("error:" RESET " queue empty\n");
         return -1;
     }
     int max = hp->arr[0];
@@ -134,11 +143,11 @@ int pop_max(Heap *hp) {
 
 bool delete(Heap *hp, int index) {
     if (is_empty(hp)) {
-        printf("deletion failed: heap empty\n");
+        printf(BOLD_RED "error:" RESET " deletion failed: heap empty\n");
         return false;
     }
     if (index < 0 || index > hp->size) {
-        printf("deletion failed: index out of range\n");
+        printf(BOLD_RED "error:" RESET " deletion failed: index out of range\n");
         return false;
     }
     hp->arr[index] = get_max(hp) + 1;

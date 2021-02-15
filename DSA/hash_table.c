@@ -3,7 +3,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define STRING_SIZE 128
+#define STRING_SIZE 512
+#define BOLD_RED "\e[1;31m"
+#define RESET "\e[0m"
 
 typedef struct item {
     int key;
@@ -15,31 +17,36 @@ typedef struct hash_table {
     int capacity;
 } hash_table;
 
+item dummy_item = {-1, "\0"};
+
 hash_table *create_hash_table(int);
-item *create_item(int, char string[]);
+item *create_item(int, char *);
 int hash(int, int);
-bool insert(hash_table *, int, char string[]);
+bool insert(hash_table *, int, char *);
 bool search(hash_table *, int);
 item delete(hash_table *, int);
 void display(hash_table *);
 void print_item(item *);
 
-item dummy_item = {-1, "\0"};
-
 int main() {
     int size, choice, key;
     char value[STRING_SIZE];
-    printf("\t\t\033[1;34mHash table with linear probing\033[0m\n");
+
+    printf("\t\tHash table with linear probing\n");
     printf("Enter the size of the hash table: ");
     scanf("%d", &size);
     if (size <= 0) {
-        printf("\033[1;31merror: size can only be positive integers\033[0m\n");
-        exit(0);
+        printf(BOLD_RED "error:" RESET " size can only be positive integers\n");
+        exit(1);
     }
     hash_table *ht = create_hash_table(size);
 
     while (true) {
-        printf("1: Insert\n2: Delete\n3: Search\n4: Display\n-1: Exit\n");
+        printf("1: Insert\n");
+        printf("2: Delete\n");
+        printf("3: Search\n");
+        printf("4: Display\n");
+        printf("-1: Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -68,9 +75,9 @@ int main() {
             case -1:
                 exit(0);
             default:
-                printf("\033[1;31merror: invalid option\033[0m\n");
+                printf(BOLD_RED "error:" RESET " invalid option\n");
         }
-        printf("---------------------------\n");
+        printf("\n");
     }
 }
 
@@ -80,6 +87,7 @@ hash_table *create_hash_table(int capacity) {
     ht->arr = (item **) malloc(capacity * sizeof(item *));
     for (int i = 0; i < ht->capacity; i++)
         ht->arr[i] = NULL;
+
     return ht;
 }
 
@@ -97,13 +105,13 @@ void display(hash_table *ht) {
 
 int hash(int key, int size) {
     if (key < 0) {
-        printf("\033[1;31merror: Key unhashable\033[0m\n");
-        exit(0);
+        printf(BOLD_RED "error:" RESET " key unhashable\n");
+        exit(1);
     }
     return (key % size);
 }
 
-bool insert(hash_table *ht, int key, char string[STRING_SIZE]) {
+bool insert(hash_table *ht, int key, char *string) {
     int index = hash(key, ht->capacity);
     int i = index;
 
@@ -116,7 +124,7 @@ bool insert(hash_table *ht, int key, char string[STRING_SIZE]) {
         }
         i = (i + 1) % ht->capacity;
         if (i == index) {
-            printf("\033[1;31merror: Hash Table is full\033[0m\n");
+            printf(BOLD_RED "error:" RESET " hash table is full\n");
             return false;
         }
     }
@@ -124,7 +132,7 @@ bool insert(hash_table *ht, int key, char string[STRING_SIZE]) {
     return true;
 }
 
-item *create_item(int key, char string[STRING_SIZE]) {
+item *create_item(int key, char *string) {
     item *new_item = (item *) malloc(sizeof(item));
     new_item->key = key;
     strcpy(new_item->string, string);
@@ -148,7 +156,7 @@ item delete(hash_table *ht, int key) {
             break;
     }
 
-    printf("\033[1;31merror: Key not found\033[0m\n");
+    printf(BOLD_RED "error:" RESET " Key not found\n");
     return result;
 }
 
@@ -166,10 +174,10 @@ bool search(hash_table *ht, int key) {
             break;
     }
 
-    printf("\033[1;31merror: Key not found\033[0m\n");
+    printf(BOLD_RED "error:" RESET " Key not found\n");
     return false;
 }
 
 void print_item(item *p) {
-    printf("\033[1;32m%d: %s\033[0m\n", p->key, p->string);
+    printf("%d: %s\n", p->key, p->string);
 }

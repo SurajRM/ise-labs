@@ -109,7 +109,6 @@ int main() {
             default:
                 printf("Invalid option\n");
                 getchar();
-                break;
         }
         printf("\n");
     }

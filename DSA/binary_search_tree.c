@@ -64,7 +64,6 @@ int main() {
                 exit(0);
             default:
                 printf(BOLD_RED "error:" RESET "invalid option\n");
-                break;
         }
         printf("\n\n");
     }
